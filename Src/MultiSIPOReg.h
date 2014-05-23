@@ -1,9 +1,9 @@
 
 /****************************************************************************************************************************
-		Funciones para manejo múltiple de registros de desplazamiento del tipo SIPO.
-		Estas funciones permiten manejar 6 salidas de datos para 6 líneas de registros, compartiendo mutuamente las
-		Líneas de clock y latch.
-		Estas funciones están basadas en el uso de los registros de desplazamiento comerciales 74595 (SIPO)
+		Funciones para manejo multiple de registros de desplazamiento del tipo SIPO.
+		Estas funciones premiten manejar 4 salidas de datos para 4 lineas de registros, compartiendo mutuamente las 
+		lineas de clock y latch.
+		Estas funciones estan basadas en el uso de los registros de desplazamiento comerciales 74595 (SIPO)
 		
 *****************************************************************************************************************************/
 
@@ -23,30 +23,26 @@
 #ifndef MULTI_SIPO_REG_H
 #define MULTI_SIPO_REG_H
 
-#define MSIPO_USE_DELAY	0	//Usar delay
-//#define MSIPO_USE_MR	0	//Usar master reset
-//#define MSIPO_USE_OE	0	//Usar open enable
+#define MSIPO_USE_DELAY	0
 
-#define MSIPO_SHIFT_DELAY	47	//48 Máximo, para xtal de 16mhz
+#define MSIPO_SHIFT_DELAY	10
 
 //Declaración de puerto y pines asociados al reg SIPO
 #define	MSIPO_PORT		PORTC	//Registro de datos del puerto
 #define	MSIPO_DDR		DDRC	//Registro de direcciones del puerto
 #define	MSIPO_PIN		PINC	//Data input register
 #define	MSIPO_MR_PIN	0		//Pin de reset maestro del registro de desplazamiento
-#define	MSIPO_SER1_PIN	0		//Pin de salida serial 1
-#define	MSIPO_SER2_PIN	1		//Pin de salida serial 2
-#define	MSIPO_SER3_PIN	2		//Pin de salida serial 3
-#define	MSIPO_SER4_PIN	3		//Pin de salida serial 4
-#define	MSIPO_SER5_PIN	4		//Pin de salida serial 5
-#define	MSIPO_SER6_PIN	5		//Pin de salida serial 6
-#define	MSIPO_SC_PIN	7		//(Shift Clock) Pin de clock para el reg de desplazamiento
-#define	MSIPO_LC_PIN	6		//(Latch Clock) Pin de carga paralela del registro de desplazamiento al latch de salida.
-#define	MSIPO_OE_PIN	0		//(Output Enable) Pin de habilitación de las salidas paralelas.
+#define	MSIPO_SER1_PIN	1		//Pin de salida serial 1
+#define	MSIPO_SER2_PIN	2		//Pin de salida serial 2
+#define	MSIPO_SER3_PIN	3		//Pin de salida serial 3
+#define	MSIPO_SER4_PIN	4		//Pin de salida serial 4
+#define	MSIPO_SC_PIN	6		//(Shift Clock) Pin de clock para el reg de desplazamiento
+#define	MSIPO_LC_PIN	5		//(Latch Clock) Pin de carga paralela del registro de desplazamiento al latch de salida.
+#define	MSIPO_OE_PIN	7		//(Output Enable) Pin de habilitación de las salidas paralelas.
 
 
 /**************************************************************************
-		Funciones para control de las líneas de un registro SIPO del
+		Funciones para control de las lineas de un registro SIPO del
 		tipo HC595.
 **************************************************************************/
 
@@ -103,20 +99,9 @@ extern inline void MSIPOEnableOutputs(uint8_t State){
 //	Inicializa los pines del puerto que manejarán al shift register.
 //	A su vez, también habilita las salidas del registro de desplazamiento.
 extern inline void MSIPOInit(){
-	MSIPO_DDR|=_BV(MSIPO_SER1_PIN)|_BV(MSIPO_SER2_PIN)|_BV(MSIPO_SER3_PIN)|_BV(MSIPO_SER4_PIN)|_BV(MSIPO_SER5_PIN)|_BV(MSIPO_SER6_PIN)|_BV(MSIPO_SC_PIN)|_BV(MSIPO_LC_PIN);
-#ifdef MSIPO_USE_MR
-	MSIPO_DDR|=_BV(MSIPO_MR_PIN);
-#endif
-#ifdef MSIPO_USE_OE
-	MSIPO_DDR|=_BV(MSIPO_OE_PIN);
-#endif
-	MSIPO_PORT|=_BV(MSIPO_SC_PIN)|_BV(MSIPO_LC_PIN);
-#ifdef MSIPO_USE_MR
-	MSIPO_PORT|=_BV(MSIPO_MR_PIN);
-#endif
-#ifdef MSIPO_USE_OE
+	MSIPO_DDR|=_BV(MSIPO_SER1_PIN)|_BV(MSIPO_SER2_PIN)|_BV(MSIPO_SER3_PIN)|_BV(MSIPO_SER4_PIN)|_BV(MSIPO_MR_PIN)|_BV(MSIPO_SC_PIN)|_BV(MSIPO_LC_PIN)|_BV(MSIPO_OE_PIN);
+	MSIPO_PORT|=_BV(MSIPO_MR_PIN)|_BV(MSIPO_SC_PIN)|_BV(MSIPO_LC_PIN);
 	MSIPOEnableOutputs(ENABLE);  //salidas habilitadas.
-#endif
 };
 
 /************************************************************************************************************************************************
@@ -173,7 +158,7 @@ Estas funciones poseen el termino "Add" en su nombre.  Estas funciones
 	salida	>---->--|SER       HC595       Q|-->->--|SER       HC595       Q|-->->--//////
 	micro			|_______________________|		|_______________________|
 
-	Parametros:		*Buffer1-6			//Punteros a la variables o vectores que contendra los bits a ser enviados para cada salida.
+	Parametros:		*Buffer1-4			//Punteros a la variables o vectores que contendra los bits a ser enviados para cada salida.
 					Bits				//Cantidad de bits a ser enviados a los registros de desplazamiento.
 	Nota: Esta función no actua sobre la habilitación de las salidas del registro de desplazamiento.  Anterior o posteriormente al envio de los
 	datos, deberá ser llamada la funcion SIPOEnableOutputs() para que los datos enviados esten efectivamente presentes a la salida del registro
@@ -181,55 +166,43 @@ Estas funciones poseen el termino "Add" en su nombre.  Estas funciones
 	paralelas del registro.
 */
 
-extern inline void MSIPOAddData(uint8_t *buf1, uint8_t *buf2, uint8_t *buf3, uint8_t *buf4, uint8_t *buf5, uint8_t *buf6, uint8_t Bits){
+extern inline void MSIPOAddData(uint8_t *Buffer1, uint8_t *Buffer2, uint8_t *Buffer3, uint8_t *Buffer4, uint8_t Bits){
  	uint8_t Byte=0;
 
 	for(uint8_t clock_pulse=0;clock_pulse<Bits;clock_pulse++)
  		{Byte=(uint8_t) (clock_pulse/8);//determina el byte del buffer de donde se retiran los datos
 	 	 //dato serial 1
-		 if(bit_is_set(buf1[Byte],(clock_pulse-(Byte*8))))
+		 if(bit_is_set(Buffer1[Byte],(clock_pulse-(Byte*8))))
 	 		MSIPO_PORT|=_BV(MSIPO_SER1_PIN);
 		 else
 	 		MSIPO_PORT&=~_BV(MSIPO_SER1_PIN);
 			
 		//dato serial 2
-		 if(bit_is_set(buf2[Byte],(clock_pulse-(Byte*8))))
+		 if(bit_is_set(Buffer2[Byte],(clock_pulse-(Byte*8))))
 	 		MSIPO_PORT|=_BV(MSIPO_SER2_PIN);
 		 else
 	 		MSIPO_PORT&=~_BV(MSIPO_SER2_PIN);
 			
 		//dato serial 3
-		 if(bit_is_set(buf3[Byte],(clock_pulse-(Byte*8))))
+		 if(bit_is_set(Buffer3[Byte],(clock_pulse-(Byte*8))))
 	 		MSIPO_PORT|=_BV(MSIPO_SER3_PIN);
 		 else
 	 		MSIPO_PORT&=~_BV(MSIPO_SER3_PIN);
 			
 		//dato serial 4
-		 if(bit_is_set(buf4[Byte],(clock_pulse-(Byte*8))))
+		 if(bit_is_set(Buffer4[Byte],(clock_pulse-(Byte*8))))
 	 		MSIPO_PORT|=_BV(MSIPO_SER4_PIN);
 		 else
 	 		MSIPO_PORT&=~_BV(MSIPO_SER4_PIN);
-
-		//dato serial 5
-		 if(bit_is_set(buf5[Byte],(clock_pulse-(Byte*8))))
-		 	MSIPO_PORT|=_BV(MSIPO_SER5_PIN);
-		 else
-		 	MSIPO_PORT&=~_BV(MSIPO_SER5_PIN);
-
-		//dato serial 6
-		 if(bit_is_set(buf6[Byte],(clock_pulse-(Byte*8))))
-		 	MSIPO_PORT|=_BV(MSIPO_SER6_PIN);
-		 else
-		 	MSIPO_PORT&=~_BV(MSIPO_SER6_PIN);
 			
 		 MSIPOShiftClockPulse();
 		}
 };
 
 //	Escribe 1 byte en las lineas SIPO.  La función permite la escritura recursiva.
-//	Parametros:		data	//Byte a ser escrito en el SIPO
-extern inline void MSIPOAddByte(uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4, uint8_t data5, uint8_t data6){
-	MSIPOAddData(&data1, &data2, &data3, &data4, &data5, &data6, 8);
+//	Parametros:		Data	//Byte a ser escrito en el SIPO
+extern inline void MSIPOAddByte(uint8_t Data1, uint8_t Data2, uint8_t Data3, uint8_t Data4){
+	MSIPOAddData(&Data1, &Data2, &Data3, &Data4, 8);
 };
 
 
@@ -263,26 +236,24 @@ extern inline void MSIPOAddByte(uint8_t data1, uint8_t data2, uint8_t data3, uin
 	ingresan por el bit menos significativo del registro para desplazarse hacia los más significativos.  O sea, cada byte serializado hacia el registro se
 	presentará invertido en las salidas del mismo.
 
-	Parametros:		*bufx			//Puntero a la variable o vector que contendra los bits a ser enviados.
+	Parametros:		*Buffer			//Puntero a la variable o vector que contendra los bits a ser enviados.
 					Bits			//Cantidad de bits a ser enviados al  registro de desplazamiento.
 	Nota: Esta función no actua sobre la habilitación de las salidas del registro de desplazamiento.  Anterior o posteriormente al envio de los
 	datos, deberá ser llamada la funcion SIPOEnableOutputs() para que los datos enviados esten efectivamente presentes a la salida del registro
 	de desplazamiento, si es que anteriormente las salidas fueron deshabilitadas.  Por defecto, la funcion SIPOInit() habilita las salidas paralelas del registro.
 */
-extern inline void MSIPOWriteData(uint8_t *buf1, uint8_t *buf2, uint8_t *buf3, uint8_t *buf4, uint8_t *buf5, uint8_t *buf6, uint8_t Bits){
-#ifdef MSIPO_USE_MR
+extern inline void MSIPOWriteData(uint8_t *Buffer1, uint8_t *Buffer2, uint8_t *Buffer3, uint8_t *Buffer4, uint8_t Bits){
 	MSIPOMasterReset();
-#endif
-	MSIPOAddData(buf1, buf2, buf3, buf4, buf5, buf6, Bits);
+	MSIPOAddData(Buffer1, Buffer2, Buffer3, Buffer4, Bits);
 	MSIPOLatchLoad();
 };
 
 
 //	Escribe 1 byte en las lineas SIPO.  La función NO es de escritura recursiva;  la función realiza una limpieza de los SIPOs antes de ser 
 //	escritos, por lo que se supone que las lineas SIPO son de un byte de longitud.
-//	Parametros:		datax	//Byte a ser escrito en las lineas SIPO
-extern inline void MSIPOWriteByte(uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4, uint8_t data5, uint8_t data6){
-	MSIPOWriteData(&data1, &data2, &data3, &data4, &data5, &data6, 8);
+//	Parametros:		Data1-8	//Byte a ser escrito en las lineas SIPO
+extern inline void MSIPOWriteByte(uint8_t Data1, uint8_t Data2, uint8_t Data3, uint8_t Data4){
+	MSIPOWriteData(&Data1, &Data2, &Data3, &Data4, 8);
 };
 
 #endif
