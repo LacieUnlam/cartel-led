@@ -31,6 +31,7 @@
 #define POS_CRON_Y	14
 
 uint8_t f_timer=0;
+uint8_t f_crono_pause=0; //actua sobre ambos cronos
 
 int main(void)
 {	int16_t posx1=1,posy1=1,aux16,aux16_1=1,aux16_2=1;
@@ -84,30 +85,38 @@ int main(void)
 				  						CtCommPrint(MSG_OK);
 				  				  		break;
 				  case CMD_CRONO:	if(!f_crono)
-							  {crono=184; //3 minutos y 5 segundos
-							   f_crono=1;
-							   f_crono_sec=0;
-							   ds10=0;
-							   CtSelectFont((PGM_P)font_vec[1],BLACK);
-							   CtClear();
-							   CtPuts("5",POS_REG_X,POS_REG_Y);
-							   CtUpdate();
-							  }
-							else
-							  {f_crono=0;
-							   f_crono_sec=0;
-							  }
+							  	  	  {crono=184; //3 minutos y 5 segundos
+							  	  	   f_timer=0;
+							  	  	   f_crono=1;
+							  	  	   f_crono_sec=0;
+							  	  	   f_crono_pause=0;
+							  	  	   ds10=0;
+							  	  	   CtSelectFont((PGM_P)font_vec[1],BLACK);
+							  	  	   CtClear();
+							  	  	   CtPuts("5",POS_REG_X,POS_REG_Y);
+							  	  	   CtUpdate();
+							  	  	  }
+									else
+									  {f_crono=0;
+									   f_crono_sec=0;
+									  }
 
-				  			CtCommPrint(MSG_OK);
-				  			break;
+				  					CtCommPrint(MSG_OK);
+				  					break;
 				  case CMD_CRO_SEC:	  if(f_crono_sec)
-				  	  	  	  	  	  	  	  {f_crono_sec=0;
-				  	  	  	  	  	  	  	  }
-				  	  	  	  	  	  	  else
-				  	  	  	  	  	  	  	  {f_crono_sec=1;
-				  	  	  	  	  	  	  	   crono_sec=0;
-				  	  	  	  	  	  	  	  }
-					  	  	  	  	  	  break;
+				  	  	  	  	  	  	  f_crono_sec=0;
+				  	  	  	  	  	  else
+				  	  	  	  	  	  	  {f_crono_sec=1;
+				  	  	  	  	  	  	   crono_sec=0;
+				  	  	  	  	  	  	  }
+				  	  	  	  	  	  CtCommPrint(MSG_OK);
+					  	  	  	  	  break;
+				  case CMD_CRO_PAUSE: if(f_crono_pause)
+					  	  	  	  	  	  f_crono_pause=0;
+				  	  	  	  	  	  else
+				  	  	  	  	  		  f_crono_pause=1;
+				  	  	  	  	  	  CtCommPrint(MSG_OK);
+					  	  	  	  	  break;
 				  case CMD_GOTO:	aux16_1=atoi(USARTGetStr(','));
 										aux16_2=atoi(USARTGetStr('\r'));
 										if(aux16_1==0 || aux16_2==0)
@@ -184,46 +193,55 @@ int main(void)
 
 		 //función de cronometro
 		 if(f_crono && f_timer)
-		   {f_timer=0;
+		   {char s_cro_serial[12];
+			f_timer=0;
 		    if(++ds10==9)//cada un segundo
 		      {ds10=0;
-		       if(crono>180)//regresiva para empezar
-		    	   {CtClear();
-		    	    CtPuts(itoa(crono-180,str,10),POS_REG_X,POS_REG_Y);
-		    	    CtUpdate();
+		       CtClear();
+		       if(crono>180)
+		    	   //regresiva para empezar
+		    	   {CtPuts(itoa(crono-180,str,10),POS_REG_X,POS_REG_Y);
+		    	    strcpy(s_cro_serial,str);//para enviar a la pc cuenta de 5 seg.
 		    	   }
 		       else
-		    	   {itoa(crono/60,str,10);
+		    	   {//calcula y muestra cro primario
+		    	    itoa(crono/60,str,10);
 		    	    strcat(str,":");
 		    	    if(crono%60<10 && crono%60>0)
 		    	    	strcat(str,"0");
 		    	    strcat(str,itoa(crono%60,auxstr,10));
 		    	    if(crono%60==0)
 		    	    	strcat(str,"0");
-		    	    CtClear();
-		    	    if(!f_crono_sec)
-		    	    	{CtSelectFont((PGM_P)font_vec[1],BLACK);
-		    	    	 CtPuts(str,POS_CRON_X,POS_CRON_Y);
-		    	    	}
-		    	    else
-		    	    	{CtSelectFont((PGM_P)font_vec[1],BLACK);
-		    	    	 CtPuts(str,POS_CRON_X,POS_CRON_Y);
-		    	    	 itoa(crono_sec++,str,10);
+
+		    	    CtSelectFont((PGM_P)font_vec[1],BLACK);
+		    	    CtPuts(str,POS_CRON_X,POS_CRON_Y);
+
+		    	    strcpy(s_cro_serial,str);//para enviar a la pc el cronometro.
+
+		    	    //calcula y muestra cro secundario
+		    	    if(f_crono_sec)
+		    	    	{itoa(crono_sec++,str,10);
 		    	    	 CtSelectFont((PGM_P)font_vec[0],BLACK);
 		    	    	 CtPuts(str,POS_CRON_X+3,48);
+
+		    	    	 strcat(s_cro_serial,",");
+		    	    	 strcat(s_cro_serial,str);//agrega el contador sec. para enviar a la pc.
 		    	    	}
-		    	    CtUpdate();
 		    	   }
+		       CtUpdate();
+
+		       USARTSendStrAndWait(s_cro_serial);
+
 		       if(crono!=0)
 		    	   crono--;
 		       else
 		    	   f_crono=0;
 		      }
 		   }
-
 		}
 }
 
 ISR(TIMER1_COMPA_vect)
-{f_timer=1;
+{if(!f_crono_pause)
+	f_timer=1;
 }
