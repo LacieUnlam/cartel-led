@@ -33,7 +33,7 @@
 uint8_t f_timer=0;
 
 int main(void)
-{	int16_t posx1=1,posy1=1,posx2=1,posy2=1,aux16,aux16_1=1,aux16_2=1;
+{	int16_t posx1=1,posy1=1,aux16,aux16_1=1,aux16_2=1;
 	char str[100],auxstr[20];
 	char* tok;
 	uint8_t color=BLACK;
@@ -71,19 +71,19 @@ int main(void)
 		 if(USARTRxCount())
 			 {switch(CtCommDecoder())
 				 {case 0:				break;
-				  case COMMAND_HELP:	CtCommPrint(MSG_HELP);
+				  case CMD_HELP:	CtCommPrint(MSG_HELP);
 										break;
-				  case COMMAND_INVALID:	CtCommPrint(MSG_INV_COMM);
+				  case CMD_INVALID:	CtCommPrint(MSG_INV_COMM);
 				  						break;
 				  case INVALID_DATA:	CtCommPrint(MSG_INV_DATA);
 										break;
-				  case COMMAND_UPDATE:	CtUpdate();
+				  case CMD_UPDATE:	CtUpdate();
 										CtCommPrint(MSG_OK);
 				  				  		break;
-				  case COMMAND_CLEAR:	CtClear();
+				  case CMD_CLEAR:	CtClear();
 				  						CtCommPrint(MSG_OK);
 				  				  		break;
-				  case COMMAND_CRONO:	if(!f_crono)
+				  case CMD_CRONO:	if(!f_crono)
 							  {crono=184; //3 minutos y 5 segundos
 							   f_crono=1;
 							   f_crono_sec=0;
@@ -100,7 +100,7 @@ int main(void)
 
 				  			CtCommPrint(MSG_OK);
 				  			break;
-				  case COMMAND_CRO_SEC:	  if(f_crono_sec)
+				  case CMD_CRO_SEC:	  if(f_crono_sec)
 				  	  	  	  	  	  	  	  {f_crono_sec=0;
 				  	  	  	  	  	  	  	  }
 				  	  	  	  	  	  	  else
@@ -108,7 +108,7 @@ int main(void)
 				  	  	  	  	  	  	  	   crono_sec=0;
 				  	  	  	  	  	  	  	  }
 					  	  	  	  	  	  break;
-				  case COMMAND_GOTO:	aux16_1=atoi(USARTGetStr(','));
+				  case CMD_GOTO:	aux16_1=atoi(USARTGetStr(','));
 										aux16_2=atoi(USARTGetStr('\r'));
 										if(aux16_1==0 || aux16_2==0)
 											 CtCommPrint(MSG_INV_DATA);
@@ -119,7 +119,7 @@ int main(void)
 											 CtCommPrint(MSG_OK);
 											}
 										break;
-				  case COMMAND_FONT_SEL:	aux16=((uint8_t)USARTGetChar())-0x30;
+				  case CMD_FONT_SEL:	aux16=((uint8_t)USARTGetChar())-0x30;
 											if(aux16>0 && aux16<=5 && font_vec[aux16-1])
 												{CtSelectFont((PGM_P)font_vec[aux16-1], color);
 												 CtCommPrint(MSG_OK);
@@ -127,7 +127,7 @@ int main(void)
 											else
 												CtCommPrint(MSG_INV_FONT);
 											break;
-				  case COMMAND_TEXT:		if(USARTIfOver())
+				  case CMD_TEXT:		if(USARTIfOver())
 												CtCommPrint(MSG_OVER);
 											else
 												{strcpy(str,USARTGetStr('\r'));
@@ -135,13 +135,13 @@ int main(void)
 												 CtCommPrint(MSG_OK);
 												}
 											break;
-				  case COMMAND_POINT:		CtSetDot(posx1,posy1,color);
+				  case CMD_POINT:		CtSetDot(posx1,posy1,color);
 											CtCommPrint(MSG_OK);
 											break;
-				  case COMMAND_INVERT:		CtInvert();
+				  case CMD_INVERT:		CtInvert();
 											CtCommPrint(MSG_OK);
 											break;
-				  case COMMAND_LINE:		switch(USARTGetChar())
+				  case CMD_LINE:		switch(USARTGetChar())
 												{case 'v':	CtLineV(posy1,posx1,posx1+atoi(USARTGetStr('\r'))-1,color);
 															CtCommPrint(MSG_OK);
 															break;
@@ -151,7 +151,7 @@ int main(void)
 												 default: CtCommPrint(MSG_INV_DATA); break;
 												}
 											break;
-				  case COMMAND_RECT:		aux16=atoi(USARTGetStr(',')); //ancho
+				  case CMD_RECT:		aux16=atoi(USARTGetStr(',')); //ancho
 											aux16_1=atoi(USARTGetStr(','));	//alto
 											aux16_2=atoi(USARTGetStr('\r'));	//lleno-vacio
 											if(-16>aux16_1 || aux16_1>16 || aux16_1==0 || -CT_ROW_DOTS>aux16 || aux16>CT_ROW_DOTS || aux16==0
@@ -162,7 +162,7 @@ int main(void)
 												 CtCommPrint(MSG_OK);
 												}
 											break;
-				  case COMMAND_OP:		if(USARTIfOver())
+				  case CMD_OP:		if(USARTIfOver())
 								  CtCommPrint(MSG_OVER);
 								else
 								  {strcpy(str,USARTGetStr('\r'));
@@ -187,45 +187,43 @@ int main(void)
 		   {f_timer=0;
 		    if(++ds10==9)//cada un segundo
 		      {ds10=0;
-			if(crono>180)//regresiva para empezar
-			  {CtClear();
-			   CtPuts(itoa(crono-180,str,10),POS_REG_X,POS_REG_Y);
-			   CtUpdate();
-			  }
-			else
-			  {itoa(crono/60,str,10);
-			   strcat(str,":");
-			   if(crono%60<10 && crono%60>0)
-				   strcat(str,"0");
-			   strcat(str,itoa(crono%60,auxstr,10));
-			   if(crono%60==0)
-			     strcat(str,"0");
-
-			   CtClear();
-			   if(!f_crono_sec)
-			   	   {CtSelectFont((PGM_P)font_vec[1],BLACK);
-			   	    CtPuts(str,POS_CRON_X,POS_CRON_Y);
-			   	   }
-			   else
-			   	   {CtSelectFont((PGM_P)font_vec[1],BLACK);
-				    CtPuts(str,POS_CRON_X,POS_CRON_Y);
-			   	    itoa(crono_sec++,str,10);
-			   	    CtSelectFont((PGM_P)font_vec[0],BLACK);
-			   	    CtPuts(str,POS_CRON_X+3,48);
-			   	   }
-			   CtUpdate();
-			  }
-			if(crono!=0)
-			  crono--;
-			else
-			  f_crono=0;
+		       if(crono>180)//regresiva para empezar
+		    	   {CtClear();
+		    	    CtPuts(itoa(crono-180,str,10),POS_REG_X,POS_REG_Y);
+		    	    CtUpdate();
+		    	   }
+		       else
+		    	   {itoa(crono/60,str,10);
+		    	    strcat(str,":");
+		    	    if(crono%60<10 && crono%60>0)
+		    	    	strcat(str,"0");
+		    	    strcat(str,itoa(crono%60,auxstr,10));
+		    	    if(crono%60==0)
+		    	    	strcat(str,"0");
+		    	    CtClear();
+		    	    if(!f_crono_sec)
+		    	    	{CtSelectFont((PGM_P)font_vec[1],BLACK);
+		    	    	 CtPuts(str,POS_CRON_X,POS_CRON_Y);
+		    	    	}
+		    	    else
+		    	    	{CtSelectFont((PGM_P)font_vec[1],BLACK);
+		    	    	 CtPuts(str,POS_CRON_X,POS_CRON_Y);
+		    	    	 itoa(crono_sec++,str,10);
+		    	    	 CtSelectFont((PGM_P)font_vec[0],BLACK);
+		    	    	 CtPuts(str,POS_CRON_X+3,48);
+		    	    	}
+		    	    CtUpdate();
+		    	   }
+		       if(crono!=0)
+		    	   crono--;
+		       else
+		    	   f_crono=0;
 		      }
-
 		   }
+
 		}
 }
 
 ISR(TIMER1_COMPA_vect)
 {f_timer=1;
-
 }
