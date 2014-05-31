@@ -193,7 +193,7 @@ int main(void)
 
 		 //función de cronometro
 		 if(f_crono && f_timer)
-		   {char s_cro_serial[12];
+		   {char s_cro_serial[15];
 			f_timer=0;
 		    if(++ds10==9)//cada un segundo
 		      {ds10=0;
@@ -230,6 +230,7 @@ int main(void)
 		    	   }
 		       CtUpdate();
 
+		       strcat(s_cro_serial,"\r");
 		       USARTSendStrAndWait(s_cro_serial);
 
 		       if(crono!=0)
