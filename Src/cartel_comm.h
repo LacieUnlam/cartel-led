@@ -27,6 +27,7 @@
 #define	CMD_CRONO		15
 #define CMD_CRO_SEC		16
 #define CMD_CRO_PAUSE	17
+#define CMD_CRO_CONF	18
 
 //Definicion de mensajes
 #define MSG_HELP		0

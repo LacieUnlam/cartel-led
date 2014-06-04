@@ -46,6 +46,9 @@ uint8_t CtCommDecoder()
 											 case 'g':  waited_char='\r';
 											 			waited_command=CMD_GOTO;
 											 			break;
+											 case 'd':  waited_char='\r';
+											 			waited_command=CMD_CRO_CONF;
+											 			break;
 											 case 'c':  waited_char='\r';
 											 			waited_command=CMD_CRONO;
 											 			break;
@@ -113,6 +116,19 @@ uint8_t CtCommDecoder()
 												}
 										   else
 											   if(!isdigit(aux)&&(aux!=',')&&(aux!='-')&&(aux!='+'))
+												   {waited_char=0;
+													waited_command=CMD_NONE;
+													return INVALID_DATA;
+												   }
+										   break;
+					   case CMD_CRO_CONF:  aux=(char)usart_db[usart_index_end-1];
+										   if(aux=='\r')
+												{waited_char=0;
+												 waited_command=CMD_NONE;
+												 return CMD_CRO_CONF;
+												}
+										   else
+											   if(!isdigit(aux)&&(aux!=','))
 												   {waited_char=0;
 													waited_command=CMD_NONE;
 													return INVALID_DATA;
@@ -205,6 +221,7 @@ void CtCommPrint(uint8_t msg)
 														\r u: actualizar\
 														\r b: borrar\
 														\r gxxx,yyy: goto. xxx:pos x, yyy:pos y\
+                                                        \r dmm,ss,ccc,s: config.  MinCP,SegCP,SegCS,SegRegr\
 														\r c: cronómetro (5seg + 3 min)\
 														\r s: cronómetro secundario ascendente\
 														\r e: pausar cronómetros (principal y secundario)\

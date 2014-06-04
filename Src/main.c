@@ -31,7 +31,7 @@
 #define POS_CRON_Y	14
 
 uint8_t f_timer=0;
-uint8_t f_crono_pause=0; //actua sobre ambos cronos
+uint8_t f_cro_pause=0; //actua sobre ambos cronos
 
 int main(void)
 {	int16_t posx1=1,posy1=1,aux16,aux16_1=1,aux16_2=1;
@@ -39,10 +39,16 @@ int main(void)
 	char* tok;
 	uint8_t color=BLACK;
 	uint8_t *font_vec[5];
-	uint16_t crono=0;
-	uint16_t crono_sec=0;
-	uint8_t f_crono=0;
-	uint8_t f_crono_sec=0;
+
+	uint16_t set_cr_prim=180;
+	uint16_t set_cr_sec=30;
+	uint8_t set_regr=5;
+	uint16_t cont_cro_pri=0;
+	uint16_t cont_cro_sec=0;
+	uint8_t cont_cro_regr=0;
+	uint8_t f_cro_pri=0;
+	uint8_t f_cro_sec=0;
+	uint8_t f_cro_regr=0;
 	uint8_t ds10=0;
 
 	CtInit();
@@ -84,50 +90,54 @@ int main(void)
 				  case CMD_CLEAR:	CtClear();
 				  						CtCommPrint(MSG_OK);
 				  				  		break;
-				  case CMD_CRONO:	if(!f_crono)
-							  	  	  {crono=184; //3 minutos y 5 segundos
-							  	  	   f_timer=0;
-							  	  	   f_crono=1;
-							  	  	   f_crono_sec=0;
-							  	  	   f_crono_pause=0;
-							  	  	   ds10=0;
-							  	  	   CtSelectFont((PGM_P)font_vec[1],BLACK);
-							  	  	   CtClear();
-							  	  	   CtPuts("5",POS_REG_X,POS_REG_Y);
+				  case CMD_CRONO:	if(!f_cro_pri)
+							  	  	  {cont_cro_pri=set_cr_prim;
+							  	  	   cont_cro_regr=set_regr;
+							  	  	   f_cro_regr=1;
+							  	  	   f_cro_pri=1;
+							  	  	   f_cro_sec=0;
+							  	  	   f_cro_pause=0;
+							  	  	   f_timer=1;
+							  	  	   ds10=8; //fuerza una primer entrada al bucle de cronometros
 							  	  	   CtUpdate();
 							  	  	  }
 									else
-									  {f_crono=0;
-									   f_crono_sec=0;
+									  {f_cro_pri=0;
+									   f_cro_sec=0;
 									  }
 
 				  					CtCommPrint(MSG_OK);
 				  					break;
-				  case CMD_CRO_SEC:	  if(f_crono_sec)
-				  	  	  	  	  	  	  f_crono_sec=0;
+				  case CMD_CRO_SEC:	  if(f_cro_sec)
+				  	  	  	  	  	  	  f_cro_sec=0;
 				  	  	  	  	  	  else
-				  	  	  	  	  	  	  {f_crono_sec=1;
-				  	  	  	  	  	  	   crono_sec=0;
+				  	  	  	  	  	  	  {f_cro_sec=1;
+				  	  	  	  	  	  	   cont_cro_sec=set_cr_sec;
 				  	  	  	  	  	  	  }
 				  	  	  	  	  	  CtCommPrint(MSG_OK);
 					  	  	  	  	  break;
-				  case CMD_CRO_PAUSE: if(f_crono_pause)
-					  	  	  	  	  	  f_crono_pause=0;
+				  case CMD_CRO_PAUSE: if(f_cro_pause)
+					  	  	  	  	  	  f_cro_pause=0;
 				  	  	  	  	  	  else
-				  	  	  	  	  		  f_crono_pause=1;
+				  	  	  	  	  		  f_cro_pause=1;
 				  	  	  	  	  	  CtCommPrint(MSG_OK);
 					  	  	  	  	  break;
-				  case CMD_GOTO:	aux16_1=atoi(USARTGetStr(','));
+				  case CMD_GOTO:		aux16_1=atoi(USARTGetStr(','));
 										aux16_2=atoi(USARTGetStr('\r'));
 										if(aux16_1==0 || aux16_2==0)
-											 CtCommPrint(MSG_INV_DATA);
+											CtCommPrint(MSG_INV_DATA);
 										else
 											{posx1=aux16_1;
-											 posy1=aux16_2;
-											 CtGoto(posx1,posy1);
-											 CtCommPrint(MSG_OK);
+											posy1=aux16_2;
+											CtGoto(posx1,posy1);
+											CtCommPrint(MSG_OK);
 											}
 										break;
+				  case CMD_CRO_CONF:	set_cr_prim=atoi(USARTGetStr(','))*60+atoi(USARTGetStr(','));
+				  	  	  	  	  	  	set_cr_sec=atoi(USARTGetStr(','));
+				  						set_regr=atoi(USARTGetStr('\r'));
+				  						CtCommPrint(MSG_OK);
+				  						break;
 				  case CMD_FONT_SEL:	aux16=((uint8_t)USARTGetChar())-0x30;
 											if(aux16>0 && aux16<=5 && font_vec[aux16-1])
 												{CtSelectFont((PGM_P)font_vec[aux16-1], color);
@@ -191,58 +201,85 @@ int main(void)
 				 }
 			 }
 
-		 //función de cronometro
-		 if(f_crono && f_timer)
-		   {char s_cro_serial[15];
+		 //bucle de cronometros
+		 if(f_cro_pri && f_timer)
+		   {char s_cro_pri[7];
+		    char s_cro_sec[4];
+		    char s_cro_regr[4];
+
 			f_timer=0;
 		    if(++ds10==9)//cada un segundo
 		      {ds10=0;
 		       CtClear();
-		       if(crono>180)
-		    	   //regresiva para empezar
-		    	   {CtPuts(itoa(crono-180,str,10),POS_REG_X,POS_REG_Y);
-		    	    strcpy(s_cro_serial,str);//para enviar a la pc cuenta de 5 seg.
+
+		       if(f_cro_regr)//regresiva para empezar
+		    	   {CtSelectFont((PGM_P)font_vec[1],BLACK);
+
+		    	    itoa(cont_cro_regr,s_cro_regr,10);
+
+		    	    CtPuts(s_cro_regr,POS_REG_X,POS_REG_Y);
+		    	    if(cont_cro_regr==0)
+		    	    	f_cro_regr=0;
+		    	    else
+		    	    	cont_cro_regr--;
 		    	   }
 		       else
-		    	   {//calcula y muestra cro primario
-		    	    itoa(crono/60,str,10);
+		    	   strcpy(s_cro_regr,"0");
+
+		       if(f_cro_regr==0)//calcula y muestra cro primario
+		    	   {itoa(cont_cro_pri/60,str,10);
+		    	    itoa(cont_cro_pri/60,s_cro_pri,10);
+
 		    	    strcat(str,":");
-		    	    if(crono%60<10 && crono%60>0)
+		    	    strcat(s_cro_pri,",");
+
+		    	    if(cont_cro_pri%60<10 && cont_cro_pri%60>0)
 		    	    	strcat(str,"0");
-		    	    strcat(str,itoa(crono%60,auxstr,10));
-		    	    if(crono%60==0)
+
+		    	    strcat(str,itoa(cont_cro_pri%60,auxstr,10));
+		    	    strcat(s_cro_pri,itoa(cont_cro_pri%60,auxstr,10));
+
+		    	    if(cont_cro_pri%60==0)
 		    	    	strcat(str,"0");
+
+				    if(cont_cro_pri!=0)
+				    	cont_cro_pri--;
 
 		    	    CtSelectFont((PGM_P)font_vec[1],BLACK);
 		    	    CtPuts(str,POS_CRON_X,POS_CRON_Y);
-
-		    	    strcpy(s_cro_serial,str);//para enviar a la pc el cronometro.
-
-		    	    //calcula y muestra cro secundario
-		    	    if(f_crono_sec)
-		    	    	{itoa(crono_sec++,str,10);
-		    	    	 CtSelectFont((PGM_P)font_vec[0],BLACK);
-		    	    	 CtPuts(str,POS_CRON_X+3,48);
-
-		    	    	 strcat(s_cro_serial,",");
-		    	    	 strcat(s_cro_serial,str);//agrega el contador sec. para enviar a la pc.
-		    	    	}
 		    	   }
+		       else
+		    	   strcpy(s_cro_pri,"0,0");
+
+		       if(f_cro_sec && f_cro_pri && cont_cro_pri!=0)//calcula y muestra cro secundario
+		    	   {itoa(cont_cro_sec,s_cro_sec,10);
+
+		    	    CtSelectFont((PGM_P)font_vec[0],BLACK);
+		    	    CtPuts(s_cro_sec,POS_CRON_X+3,48);
+
+		    	    if(cont_cro_sec!=0)//se mantiene en cero, aunque el primario siga decrementandose.
+		    	    	cont_cro_sec--;
+		    	   }
+		       else
+		    	   strcpy(s_cro_sec,"0");
+
 		       CtUpdate();
 
-		       strcat(s_cro_serial,"\r");
-		       USARTSendStrAndWait(s_cro_serial);
+		       str[0]=0;
+		       strcat(str,s_cro_pri);
+		       strcat(str,",");
+		       strcat(str,s_cro_sec);
+		       strcat(str,",");
+		       strcat(str,s_cro_regr);
+		       strcat(str,"\r");
+		       USARTSendStrAndWait(str);
 
-		       if(crono!=0)
-		    	   crono--;
-		       else
-		    	   f_crono=0;
 		      }
 		   }
 		}
 }
 
 ISR(TIMER1_COMPA_vect)
-{if(!f_crono_pause)
+{if(!f_cro_pause)
 	f_timer=1;
 }
