@@ -12,7 +12,7 @@
 
 //dimensiones del mapa en memoria del cartel
 #define MODULO_FILE_QTY		8						//cantidad de modulos en una fila
-#define FILES_QTY			4						//cantidad de filas de modulos
+#define FILES_QTY			6						//cantidad de filas de modulos
 
 #define CT_COL_DOTS			(FILES_QTY*4)			//cantidad de puntos verticales
 #define CT_ROW_DOTS			(8*MODULO_FILE_QTY)		//cantidad de puntos horizontales

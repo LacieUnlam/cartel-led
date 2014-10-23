@@ -25,9 +25,9 @@
 #include "BanckGothicLtBT_8.h"
 #include "BroadwayBT_8.h"
 
-#define POS_REG_X	4
+#define POS_REG_X	7
 #define POS_REG_Y	27
-#define POS_CRON_X	4
+#define POS_CRON_X	7
 #define POS_CRON_Y	14
 
 uint8_t f_timer=0;
@@ -189,10 +189,10 @@ int main(void)
 								   CtSelectFont((PGM_P)font_vec[0],BLACK);
 								   tok=strtok(str,",");
 								   if(tok!=NULL)
-								     CtPuts(tok,1,2);
+								     CtPuts(tok,4,3);
 								   tok=strtok(NULL,",");
 								   if(tok!=NULL)
-								     CtPuts(tok,9,2);
+								     CtPuts(tok,15,3);
 								   CtUpdate();
 								   CtCommPrint(MSG_OK);
 								  }
