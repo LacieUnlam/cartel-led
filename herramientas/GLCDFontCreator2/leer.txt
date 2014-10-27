@@ -1,0 +1,4 @@
+La aplicación permite exportar archivos de fuentes nuevas o ya presentes, a una estructura en C que pueda ser 
+utilizada por la librería KS0108 para su uso en displays gráficos manejados por micros AVR.
+El código resultante hace uso de las librerias libc.
+Se deben generar en la aplicacion por exportación, guardando con extensión .h.

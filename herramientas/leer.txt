@@ -1,0 +1,2 @@
+GLCDFontCreator genera archivos .h descriptivos de las fuentes a usar en el cartel, partiendo de fuentes de la PC.
+Los .h se generan por exportación con la herramienta.
