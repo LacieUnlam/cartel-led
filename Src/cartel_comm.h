@@ -28,6 +28,8 @@
 #define CMD_CRO_SEC		16
 #define CMD_CRO_PAUSE	17
 #define CMD_CRO_CONF	18
+#define CMD_BRI_UP		19
+#define CMD_BRI_DW		20
 
 //Definicion de mensajes
 #define MSG_HELP		0

@@ -79,6 +79,12 @@ uint8_t CtCommDecoder()
 											 case 'o':  waited_char='\r';
 											 			waited_command=CMD_OP;
 											 			break;
+											 case '8':  waited_char=0;
+											 			return CMD_BRI_UP;
+											 			break;
+											 case '2':  waited_char=0;
+											 			return CMD_BRI_DW;
+											 			break;
 											 case '\r': waited_char=0;
 														return CMD_INVALID;
 														break;
@@ -232,6 +238,8 @@ void CtCommPrint(uint8_t msg)
 														\r i: invertir\
 														\r lv-hxxx: linea.  v:vertical, h:horizontal, xxx:longitud\
 														\r rxxx,yyy,z: rectángulo.  xxx:ancho, yyy:alto, z:0-vacio 1-lleno\
+														\r 8: aumenta brillo\
+														\r 2: disminuye brillo\
 														\r ?: ayuda"));
 							USARTSendStrAndWait_P(PSTR("\r"));
 							break;

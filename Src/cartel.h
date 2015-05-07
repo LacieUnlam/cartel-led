@@ -51,10 +51,15 @@ volatile uint8_t ct_pos_byte, ct_pos_bit; //posición lógica en el cartel
 volatile uint8_t ct_last_char_width; //para calcular la distancia entre caracteres
 volatile uint8_t ct_last_char_height; //para calcular la distancia entre lineas
 volatile uint8_t ct_font_height;
+volatile uint16_t ct_actual_frame_time; //indica el tiempo transcurrido en el cuadro actual
+volatile uint8_t ct_f_update; //flag indicando op de refresco en el cuadro
+volatile uint8_t ct_f_clear;  //flag indicando op de borrado en el cuadro
 
 //	Declaracion de funciones
 void CtInit();		//Inicia los recursos del cartel
 void CtClear(); 	//Borra el cartel en memoria
+void CtClrScr(); 	//Borra el cartel sin modificar la memoria.
+uint8_t CtDuty(uint8_t, uint16_t); //controla el nivel de brillo
 void CtFull();		//Pone todos en uno
 void CtInvert();	//Invierte todos los puntos.
 void CtMapCopy(uint8_t, uint8_t); //copia un mapa en otro.  El primer parametro es destino, el segundo fuente.

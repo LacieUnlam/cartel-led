@@ -27,7 +27,7 @@
 //#define MSIPO_USE_MR	0	//Usar master reset
 //#define MSIPO_USE_OE	0	//Usar open enable
 
-#define MSIPO_SHIFT_DELAY	47	//48 Máximo, para xtal de 16mhz
+#define MSIPO_SHIFT_DELAY	2	//48 Máximo, para xtal de 16mhz
 
 //Declaración de puerto y pines asociados al reg SIPO
 #define	MSIPO_PORT		PORTC	//Registro de datos del puerto

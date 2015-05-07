@@ -32,6 +32,7 @@
 
 uint8_t f_timer=0;
 uint8_t f_cro_pause=0; //actua sobre ambos cronos
+uint16_t cont_timer_bri=0;
 
 int main(void)
 {	int16_t posx1=1,posy1=1,aux16,aux16_1=1,aux16_2=1;
@@ -39,6 +40,7 @@ int main(void)
 	char* tok;
 	uint8_t color=BLACK;
 	uint8_t *font_vec[5];
+	uint8_t bri_duty=100;
 
 	uint16_t set_cr_prim=180;
 	uint16_t set_cr_sec=30;
@@ -59,8 +61,13 @@ int main(void)
 	//timer 1
 	OCR1A=25000; //tics para 0.1 seg, a Xtal de 16M
 	TCCR1A=0b00000000;
-	TIMSK=0b00010000;
 	TCCR1B=0b00001011; //CTC, prescaler a 64, timer arrancado
+
+	//timer 0
+	OCR0=50; //tics para 0.2 mseg, a Xtal de 16M
+	TCCR0=0b00001011; //CTC, prescaler a 64, timer arrancado
+
+	TIMSK=0b00010010;//habilita interrupciones timer 0 y 1
 
 	//carga de los vectores de fuentes
 	font_vec[0]=Font_Base;
@@ -84,7 +91,16 @@ int main(void)
 				  						break;
 				  case INVALID_DATA:	CtCommPrint(MSG_INV_DATA);
 										break;
-				  case CMD_UPDATE:	CtUpdate();
+				  case CMD_BRI_UP:	bri_duty+=5;
+				  	  	  	  	  	if(bri_duty>100)
+				  	  	  	  	  		bri_duty=100;
+				  	  	  	  	  	break;
+				  case CMD_BRI_DW:	if(bri_duty-5>=0)
+					  	  	  	  	  	bri_duty-=5;
+				  	  	  	  	  	else
+				  	  	  	  	  		bri_duty=0;
+				  	  	  	  	  	break;
+				  case CMD_UPDATE:	//CtUpdate();
 										CtCommPrint(MSG_OK);
 				  				  		break;
 				  case CMD_CLEAR:	CtClear();
@@ -99,7 +115,7 @@ int main(void)
 							  	  	   f_cro_pause=0;
 							  	  	   f_timer=1;
 							  	  	   ds10=8; //fuerza una primer entrada al bucle de cronometros
-							  	  	   CtUpdate();
+							  	  	   //CtUpdate();
 							  	  	  }
 									else
 									  {f_cro_pri=0;
@@ -193,7 +209,7 @@ int main(void)
 								   tok=strtok(NULL,",");
 								   if(tok!=NULL)
 								     CtPuts(tok,15,3);
-								   CtUpdate();
+								   //CtUpdate();
 								   CtCommPrint(MSG_OK);
 								  }
 								break;
@@ -263,7 +279,7 @@ int main(void)
 		       else
 		    	   strcpy(s_cro_sec,"0");
 
-		       CtUpdate();
+		       //CtUpdate();
 
 		       str[0]=0;
 		       strcat(str,s_cro_pri);
@@ -276,10 +292,21 @@ int main(void)
 
 		      }
 		   }
+
+		 //bucle de refresco de pantalla
+		 if(cont_timer_bri>0)
+			 {volatile uint16_t aux=cont_timer_bri;
+			  cont_timer_bri=0;
+			  CtDuty(bri_duty , aux*200);
+			 }
 		}
 }
 
 ISR(TIMER1_COMPA_vect)
 {if(!f_cro_pause)
 	f_timer=1;
+}
+
+ISR(TIMER0_COMP_vect)
+{cont_timer_bri++; //incrementa cada 0.2 mseg
 }

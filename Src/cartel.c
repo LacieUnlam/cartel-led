@@ -11,12 +11,44 @@
 
 #include "cartel.h"
 
+//#define CT_REFRESH_TIME 1500 //tiempo de refresco en uSeg, para demora de SIPO de 1uSeg.
+//tiempo de refresco medidos en uSeg
+//#define CT_MREFRESH_TIME 10750 //SIN demora de SIPO.
+//#define CT_MREFRESH_TIME 11250 //para demora de SIPO de 1uSeg.
+#define CT_MREFRESH_TIME 11616 //para demora de SIPO de 2uSeg.
+//#define CT_MREFRESH_TIME 12800 //para demora de SIPO de 4uSeg.
+//#define CT_MREFRESH_TIME 16000 //para demora de SIPO de 10uSeg.
+//#define CT_MREFRESH_TIME 18592 //para demora de SIPO de 15uSeg.
+
+//tiempo de borrado medidos en uSeg
+//#define CT_MCLEAR_TIME	4200  //SIN demora de SIPO.
+//#define CT_MCLEAR_TIME	4700  //para demora de SIPO de 1uSeg.
+#define CT_MCLEAR_TIME	5170  //para demora de SIPO de 2uSeg.
+//#define CT_MCLEAR_TIME	6300  //para demora de SIPO de 4uSeg.
+//#define CT_MCLEAR_TIME	9400  //para demora de SIPO de 10uSeg.
+//#define CT_MCLEAR_TIME	12033 //para demora de SIPO de 15uSeg.
+
+//Tiempos medidos + incertidumbre en uSeg.
+#define CT_CLEAR_TIME (CT_MCLEAR_TIME+500)
+#define CT_REFRESH_TIME (CT_MREFRESH_TIME+500)
+
+//#define CT_DUTY_STEPS (8000/CT_REFRESH_TIME) //cantidad de pasos por cuadro, suponiendo FR=25
+
+#define CT_FR 39 //FrameRate
+#define CT_FP (1000000/CT_FR) //Período de cuadro, en uSeg.
+#define CT_TIME_PER_DUTY (CT_FP/100)//tiempo por paso de duty, en uSeg.
+#define CT_DUTY_MIN (CT_CLEAR_TIME/CT_TIME_PER_DUTY)
+#define CT_DUTY_MAX (100-(CT_REFRESH_TIME/CT_TIME_PER_DUTY))
+
 const uint8_t*		ct_font; //puntero a fuente seleccionada
 uint8_t				ct_font_color; //color de fuente
 
 void CtInit()
 {
  MSIPOInit();
+ ct_actual_frame_time=0;
+ ct_f_update=0;
+ ct_f_clear=0;
  ct_map_sel=CT_MAP_OUT;
 }
 
@@ -131,6 +163,44 @@ void CtUpdate()
 		}
 
  MSIPOLatchLoad();
+}
+
+void CtClrScr()
+{for(uint8_t i=0;i<(MODULO_FILE_QTY*4);i++) //modulos por fila x 4 filas (de 8 LEDs) por módulo
+	 MSIPOAddByte(0,0,0,0,0,0);
+ MSIPOLatchLoad();
+}
+
+uint8_t CtDuty(uint8_t duty, uint16_t time)
+{uint16_t duty_time;
+ uint8_t ret=0;
+
+ if(duty>100)
+	 duty=100;
+
+ ct_actual_frame_time+=time; //actualiza el tiempo del ciclo
+ while(ct_actual_frame_time>CT_FP)//corrige si hay desborde
+	 {ct_actual_frame_time-=CT_FP;
+	  ct_f_update=0;
+	  ct_f_clear=0;
+	  ret=1;
+	 }
+
+ duty_time=duty*CT_TIME_PER_DUTY;
+ if(duty_time<CT_CLEAR_TIME)
+	 duty_time=CT_CLEAR_TIME;
+
+ if(ct_actual_frame_time >= CT_FP-CT_REFRESH_TIME && !ct_f_update)
+	 {CtUpdate();
+	  ct_f_update=1;
+	 }
+
+ if((ct_actual_frame_time >= duty_time-CT_CLEAR_TIME) && (CT_FP-CT_CLEAR_TIME-CT_REFRESH_TIME > ct_actual_frame_time) && !ct_f_clear)
+  	 {CtClrScr();
+  	  ct_f_clear=1;
+  	 }
+
+ return ret;
 }
 
 uint8_t CtGoto(int16_t x, int16_t y) //x->vertical, y->horizontal.  Desde esquina superior izquierda
