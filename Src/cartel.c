@@ -49,7 +49,7 @@ void CtInit()
  ct_actual_frame_time=0;
  ct_f_update=0;
  ct_f_clear=0;
- ct_map_sel=CT_MAP_OUT;
+ ct_map_sel=CT_MAP_A;
 }
 
 void CtClear()
@@ -70,6 +70,10 @@ void CtInvert()
 void CtMapCopy(uint8_t dest, uint8_t fuente)
 {for(uint8_t i=0; i<CT_BYTES_LENGTH; i++)
 	ct_map[dest][i]=ct_map[fuente][i];
+}
+
+void CtUpdate()
+{CtMapCopy(CT_MAP_OUT, CT_MAP_A);
 }
 
 void CtMapLogicOp(uint8_t op)
@@ -93,7 +97,7 @@ void CtMapLogicOp(uint8_t op)
 
 }
 
-void CtUpdate()
+void CtRefresh()
 {uint8_t byte[FILES_QTY]; //Un byte por salida serie SIPO.
 
  for(uint8_t i=0;i<FILES_QTY;i++)
@@ -105,42 +109,42 @@ void CtUpdate()
 			{
 #if (FILES_QTY>0)
 			 //carga de byte 0
-			 if(bit_is_set(ct_map[ct_map_sel][(modulo*8)+mod_col],mod_fila))
+			 if(bit_is_set(ct_map[CT_MAP_OUT][(modulo*8)+mod_col],mod_fila))
 				byte[0]|=_BV(7-mod_col);
 			 else
 				byte[0]&=~_BV(7-mod_col);
 #endif
 #if (FILES_QTY>1)
 			 //carga de byte 1
-			 if(bit_is_set(ct_map[ct_map_sel][(modulo*8)+mod_col],mod_fila+4))
+			 if(bit_is_set(ct_map[CT_MAP_OUT][(modulo*8)+mod_col],mod_fila+4))
 				byte[1]|=_BV(7-mod_col);
 			 else
 				byte[1]&=~_BV(7-mod_col);
 #endif
 #if (FILES_QTY>2)
 			 //carga de byte 2
-			 if(bit_is_set(ct_map[ct_map_sel][CT_ROW_DOTS+(modulo*8)+mod_col],mod_fila))
+			 if(bit_is_set(ct_map[CT_MAP_OUT][CT_ROW_DOTS+(modulo*8)+mod_col],mod_fila))
 				byte[2]|=_BV(7-mod_col);
 			 else
 				byte[2]&=~_BV(7-mod_col);
 #endif
 #if (FILES_QTY>3)
 			 //carga de byte 3
-			 if(bit_is_set(ct_map[ct_map_sel][CT_ROW_DOTS+(modulo*8)+mod_col],mod_fila+4))
+			 if(bit_is_set(ct_map[CT_MAP_OUT][CT_ROW_DOTS+(modulo*8)+mod_col],mod_fila+4))
 				byte[3]|=_BV(7-mod_col);
 			 else
 				byte[3]&=~_BV(7-mod_col);
 #endif
 #if (FILES_QTY>4)
 			 //carga de byte 4
-			 if(bit_is_set(ct_map[ct_map_sel][2*CT_ROW_DOTS+(modulo*8)+mod_col],mod_fila))
+			 if(bit_is_set(ct_map[CT_MAP_OUT][2*CT_ROW_DOTS+(modulo*8)+mod_col],mod_fila))
 			 	byte[4]|=_BV(7-mod_col);
 			 else
 			 	byte[4]&=~_BV(7-mod_col);
 #endif
 #if (FILES_QTY>5)
 			 //carga de byte 5
-			 if(bit_is_set(ct_map[ct_map_sel][2*CT_ROW_DOTS+(modulo*8)+mod_col],mod_fila+4))
+			 if(bit_is_set(ct_map[CT_MAP_OUT][2*CT_ROW_DOTS+(modulo*8)+mod_col],mod_fila+4))
 			 	byte[5]|=_BV(7-mod_col);
 			 else
 			 	byte[5]&=~_BV(7-mod_col);
@@ -191,7 +195,7 @@ uint8_t CtDuty(uint8_t duty, uint16_t time)
 	 duty_time=CT_CLEAR_TIME;
 
  if(ct_actual_frame_time >= CT_FP-CT_REFRESH_TIME && !ct_f_update)
-	 {CtUpdate();
+	 {CtRefresh();
 	  ct_f_update=1;
 	 }
 

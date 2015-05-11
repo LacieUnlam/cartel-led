@@ -61,7 +61,7 @@ void CtMapLogicOp(uint8_t op)
 
 }
 
-void CtUpdate()
+void CtRefresh()
 {uint8_t byte[FILES_QTY]; //Un byte por salida serie SIPO.
 
  for(uint8_t i=0;i<FILES_QTY;i++)

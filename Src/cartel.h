@@ -21,7 +21,7 @@
 #define CT_BYTES_LENGTH	(((FILES_QTY+1) / 2)*CT_ROW_DOTS)
 
 //Identificacion de los mapas
-#define CT_MAP_OUT		0
+#define CT_MAP_OUT		0 //mapa de salida y refresco
 #define CT_MAP_A		1
 #define CT_MAP_B		2
 
@@ -63,7 +63,8 @@ uint8_t CtDuty(uint8_t, uint16_t); //controla el nivel de brillo
 void CtFull();		//Pone todos en uno
 void CtInvert();	//Invierte todos los puntos.
 void CtMapCopy(uint8_t, uint8_t); //copia un mapa en otro.  El primer parametro es destino, el segundo fuente.
-void CtUpdate();	//Actualiza el cartel
+void CtUpdate(); //Actualiza el buffer de refresco
+void CtRefresh();	//Actualiza el cartel
 uint8_t CtGoto(int16_t x, int16_t y);	//Situa el cursor en un punto del cartel.  X crece hacia abajo, mientras que Y hacia la derecha.
 										//No acepta cero como valor posible.
 										//Retorna 0 si no hay overflow ni en X, ni en Y.

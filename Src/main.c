@@ -100,7 +100,7 @@ int main(void)
 				  	  	  	  	  	else
 				  	  	  	  	  		bri_duty=0;
 				  	  	  	  	  	break;
-				  case CMD_UPDATE:	//CtUpdate();
+				  case CMD_UPDATE:	CtUpdate();
 										CtCommPrint(MSG_OK);
 				  				  		break;
 				  case CMD_CLEAR:	CtClear();
@@ -115,7 +115,7 @@ int main(void)
 							  	  	   f_cro_pause=0;
 							  	  	   f_timer=1;
 							  	  	   ds10=8; //fuerza una primer entrada al bucle de cronometros
-							  	  	   //CtUpdate();
+							  	  	   CtUpdate();
 							  	  	  }
 									else
 									  {f_cro_pri=0;
@@ -209,7 +209,7 @@ int main(void)
 								   tok=strtok(NULL,",");
 								   if(tok!=NULL)
 								     CtPuts(tok,15,3);
-								   //CtUpdate();
+								   CtUpdate();
 								   CtCommPrint(MSG_OK);
 								  }
 								break;
@@ -279,7 +279,7 @@ int main(void)
 		       else
 		    	   strcpy(s_cro_sec,"0");
 
-		       //CtUpdate();
+		       CtUpdate();
 
 		       str[0]=0;
 		       strcat(str,s_cro_pri);
