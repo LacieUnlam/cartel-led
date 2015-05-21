@@ -367,39 +367,39 @@ index = index*bytes+charCount+FONT_WIDTH_TABLE;
 width = CtDataRead(ct_font+FONT_WIDTH_TABLE+c); //recupera de la tabla de anchos, el que se corresponde con el caracter requerido
 
 // last but not least, draw the character
-for(uint8_t i=0; i<bytes; i++) {//una vuelta por cada byte en altura de la fuente
-	uint8_t page = i*width;	//Una pagina contiene todos los bytes de cada fila en la fuente.
-	for(uint8_t j=0; j<width; j++) {//una vuelta por cada byte de la pagina
-		uint8_t data = CtDataRead(ct_font+index+page+j);
+for(uint8_t i=0; i<bytes; i++) //una vuelta por cada byte de altura de la fuente
+	{uint8_t page = i*width;	//Una pagina contiene todos los bytes de cada fila en la fuente.
+	 for(uint8_t j=0; j<width; j++)//una vuelta por cada byte de la pagina
+	 	 {uint8_t data = CtDataRead(ct_font+index+page+j);
+
+	 	  if(ct_font_height < (i+1)*8)//si es la última fila de bytes del caracter, y con ella se supera la altura del caracter.
+	 	  	  {data >>= (i+1)*8-ct_font_height;	//no se porque esto
+	 	  	  }
 		
-		if(ct_font_height < (i+1)*8) {			//si es la última fila de bytes del caracter, y con ella se supera la altura del caracter.
-			data >>= (i+1)*8-ct_font_height;	//no se porque esto
-		}		
-		
-		if(ct_font_color != BLACK)
-			data=~data;
+	 	  if(ct_font_color != BLACK)
+	 		  data=~data;
 			
-		for(uint8_t k=0;k<8;k++)//un ciclo por cada bit dibujado del byte
-			{if(i*8+k>ct_font_height)
-				break;//Si el punto queda por arriba del tamaño de la fuente, se interrumpe la impresión del byte
+	 	  for(uint8_t k=0;k<8;k++)//un ciclo por cada bit dibujado del byte
+	 	  	  {if(i*8+k>ct_font_height)
+	 	  		  break;//Si el punto queda por arriba del tamaño de la fuente, se interrumpe la impresión del byte
+
+	 	  	   if(bit_is_set(data,k))//dibuja el punto
+	 	  		  CtSetDot(x+(i*8)+k,y+j,BLACK);
+	 	  	   else
+	 	  		  CtSetDot(x+(i*8)+k,y+j,WHITE);
 				
-			 if(bit_is_set(data,k))//dibuja el punto
-				CtSetDot(x+(i*8)+k,y+j,BLACK);
-			 else
-				CtSetDot(x+(i*8)+k,y+j,WHITE);
-				
-			 if(ct_font_color==BLACK)//al salir la función, se habra guardado en ct_last_char_height la altura de este caracter.
-				{if((bit_is_set(data,k)) && ((i*8)+k>ct_last_char_height))
-					ct_last_char_height=(i*8)+k;
-				}					
-			 else
-				{if((bit_is_clear(data,k)) && ((i*8)+k>ct_last_char_height))
-					ct_last_char_height=(i*8)+k;
-				}					
-			
-			}
+	 	  	   if(ct_font_color==BLACK)//al salir la función, se habra guardado en ct_last_char_height la altura de este caracter.
+	 	  	   	   {if((bit_is_set(data,k)) && ((i*8)+k>ct_last_char_height))
+	 	  	   		   ct_last_char_height=(i*8)+k;
+	 	  	   	   }
+	 	  	   else
+	 	  	   	   {if((bit_is_clear(data,k)) && ((i*8)+k>ct_last_char_height))
+	 	  	   		   ct_last_char_height=(i*8)+k;
+	 	  	   	   }
+	 	  	  }
 		}
 	}
+
 ct_last_char_width=width;
 return 1;
 }
@@ -416,7 +416,7 @@ void CtPuts(char *str,uint8_t x,uint8_t y)
 			line_height=ct_last_char_height;
 		}		
 	 else
-		{h+=line_height+1;//un pixel de separacion entre lineas
+		{h+=line_height+FONT_LINE_SPA;//separacion entre lineas
 		 line_height=0;
 		 l=y;
 		}
@@ -429,4 +429,118 @@ void CtPuts(char *str,uint8_t x,uint8_t y)
 		else
 			CtSetDot(h+i,l,BLACK);
 	}
+}
+
+uint8_t CtPutCharWin(char c, uint8_t x, uint8_t y, uint8_t init, uint8_t leng)
+{uint8_t width = 0;
+ ct_last_char_height=0;
+ uint8_t bytes = (ct_font_height+7)/8; //(CH) Bytes ocupados por el alto de la fuente.
+
+ uint8_t firstChar = CtDataRead(ct_font+FONT_FIRST_CHAR); //primer caracter ASCII definido de la fuente
+ uint8_t charCount = CtDataRead(ct_font+FONT_CHAR_COUNT); //cantidad de caracteres de la fuente
+
+ if(c < firstChar || c >= (firstChar+charCount)) //verifica si el caracter requerido esta presente en la fuente
+	 return 0;
+
+ c-= firstChar; //(CH) Solo los caracteres imprimibles de la tabla ascii se presentan en el .h descriptor de la fuente a utilizar.
+
+ uint16_t index = 0;
+ // read width data, to get the index
+ for(uint8_t i=0; i<c; i++) //(CH)acumula los valores de la tabla de anchos para obtener el salto hasta el caracter a imprimir
+	 index += CtDataRead(ct_font+FONT_WIDTH_TABLE+i);
+
+ index = index*bytes+charCount+FONT_WIDTH_TABLE;
+ width = CtDataRead(ct_font+FONT_WIDTH_TABLE+c); //recupera de la tabla de anchos, el que se corresponde con el caracter requerido
+
+ if(leng==0) //leng=0 no es válido, y se considerará como el total del ancho de la fuente
+	 leng=width;
+
+ // last but not least, draw the character
+ for(uint8_t i=0; i<bytes; i++) //una vuelta por cada byte de altura de la fuente
+	 {uint8_t page = i*width;	//Una pagina contiene todos los bytes de cada fila en la fuente.
+	  for(uint8_t j=0; j<width; j++)//una vuelta por cada byte de la pagina
+		  {uint8_t data=0;
+		   if(j>=init && j<init+leng)//se lee el byte si esta dentro del rango de lineas a graficar
+			   data = CtDataRead(ct_font+index+page+j);
+
+		   if(ct_font_height < (i+1)*8)//si es la última fila de bytes del caracter, y con ella se supera la altura del caracter.
+			   {data >>= (i+1)*8-ct_font_height;	//no se porque esto
+			   }
+
+		   if(ct_font_color != BLACK)
+			   data=~data;
+
+		   for(uint8_t k=0;k<8;k++)//un ciclo por cada bit dibujado del byte
+		   	   {if(i*8+k>ct_font_height)
+		   		   break;//Si el punto queda por arriba del tamaño de la fuente, se interrumpe la impresión del byte
+
+		   	   	if(bit_is_set(data,k))//dibuja el punto
+		   	   		CtSetDot(x+(i*8)+k,y+j-init,BLACK);
+		   	   	else
+		   	   		CtSetDot(x+(i*8)+k,y+j-init,WHITE);
+
+		   	   	if(ct_font_color==BLACK)//al salir la función, se habra guardado en ct_last_char_height la altura de este caracter.
+		   	   		{if((bit_is_set(data,k)) && ((i*8)+k>ct_last_char_height))
+		   	   			ct_last_char_height=(i*8)+k;
+		   	   		}
+		   	   	else
+		   	   		{if((bit_is_clear(data,k)) && ((i*8)+k>ct_last_char_height))
+		   	   			ct_last_char_height=(i*8)+k;
+		   	   		}
+		   	   }
+		  }
+	 }
+
+ ct_last_char_width=width;
+ return 1;
+}
+
+void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng)
+{uint8_t l=y, h=x;
+ uint8_t line_height=0;
+ uint8_t ch_width;
+ uint8_t dif_width;
+ uint8_t ch_init;
+ uint8_t ch_end;
+ uint16_t acc_width=0; //ancho en pixeles acumulado de toda la cadena
+ uint8_t ch_index=0;//indice del caracter en la cadena
+
+ for(uint16_t i=init; i<init+leng; i++)
+ 	 {while(str[ch_index]!=0 && acc_width<i)
+ 		{ch_width=CtCharWidth(str[ch_index]);
+ 		 acc_width+=ch_width+1; //un pixel de separacion entre caracteres
+ 		 ch_index++;
+ 		}
+
+ 	  if(str[ch_index-1]==0)
+ 		  return;
+
+ 	  dif_width=acc_width-i-1;
+
+ 	  if(acc_width-1-init<ch_width)//es el primer ch a dibujar en la ventana
+ 		  ch_init=ch_width-(acc_width-1-init);
+
+ 	  if(i==init)
+ 	  	  {CtPutCharWin(str[ch_index-1],x,y,ch_width-(acc_width-init-1),0);
+
+ 	  	  }
+
+ 	 }
+
+ while(*str!=0)
+	{acc_width+=CtCharWidth(*str);
+	 if(acc_width-init >= 0)
+		 if(acc_width-init < CtCharWidth(*str))
+	 CtPutChar(*str,h,l);
+	 l+=ct_last_char_width+1;
+	 str++;
+
+	 //Un pixel de separación entre caracteres
+	 for(uint8_t i=0;i<ct_font_height;i++)
+		if(ct_font_color==BLACK)
+			CtSetDot(h+i,l,WHITE);
+		else
+			CtSetDot(h+i,l,BLACK);
+	}
+
 }

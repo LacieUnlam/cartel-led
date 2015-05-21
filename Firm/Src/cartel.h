@@ -44,6 +44,8 @@
 #define FONT_CHAR_COUNT		5
 #define FONT_WIDTH_TABLE	6
 
+#define FONT_LINE_SPA		1 //pixel de espaciado entre lineas
+
 //	Variables globales
 volatile uint8_t ct_map[3][CT_BYTES_LENGTH]; //matriz con los mapas
 volatile uint8_t ct_map_sel; //seleccion del cartel a editar

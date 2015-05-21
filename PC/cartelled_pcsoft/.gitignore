@@ -1,0 +1,17 @@
+/*.~ddp
+/*.~h
+/*.~cpp
+/*.~dfm
+/*.~bpr
+/OutPuts/*.obj
+/OutPuts/*.exe
+/OutPuts/*.tds
+/OutPuts/ROBOT.TXT
+/OutPuts/REGISTRO.TXT
+/OutPuts/SERIE.obj
+/OutPuts/Unit1.obj
+/OutPuts/Unit2.obj
+/OutPuts/Unit3.obj
+/OutPuts/Unit5.obj
+/OutPuts/SERIE.exe
+/OutPuts/SERIE.tds
