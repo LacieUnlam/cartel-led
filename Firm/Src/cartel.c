@@ -11,6 +11,8 @@
 
 #include "cartel.h"
 
+#include "usart.h"
+
 //#define CT_REFRESH_TIME 1500 //tiempo de refresco en uSeg, para demora de SIPO de 1uSeg.
 //tiempo de refresco medidos en uSeg
 //#define CT_MREFRESH_TIME 10750 //SIN demora de SIPO.
@@ -496,51 +498,57 @@ uint8_t CtPutCharWin(char c, uint8_t x, uint8_t y, uint8_t init, uint8_t leng)
 }
 
 void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng)
-{uint8_t l=y, h=x;
- uint8_t line_height=0;
- uint8_t ch_width;
- uint8_t dif_width;
- uint8_t ch_init;
- uint8_t ch_end;
+{uint8_t l=y;
+ uint8_t ch_width=0;
+ uint8_t ch_line_init;
+ uint8_t ch_line_end;
  uint16_t acc_width=0; //ancho en pixeles acumulado de toda la cadena
  uint8_t ch_index=0;//indice del caracter en la cadena
 
- for(uint16_t i=init; i<init+leng; i++)
- 	 {while(str[ch_index]!=0 && acc_width<i)
+ uint16_t i=init;
+
+ while(i<init+leng)
+ 	 {USARTSendStrAndWait("1\r");
+	  while(str[ch_index]!=0 && acc_width<=i)
  		{ch_width=CtCharWidth(str[ch_index]);
  		 acc_width+=ch_width+1; //un pixel de separacion entre caracteres
  		 ch_index++;
  		}
 
- 	  if(str[ch_index-1]==0)
+ 	USARTSendStrAndWait("2\r");
+
+ 	  if(str[ch_index-1]==0)//si el caracter actual es el nulo, sale
  		  return;
 
- 	  dif_width=acc_width-i-1;
+ 	  //dif_width=acc_width-i-1;//calcula la cantidad de lineas a representar del caracter actual
 
- 	  if(acc_width-1-init<ch_width)//es el primer ch a dibujar en la ventana
- 		  ch_init=ch_width-(acc_width-1-init);
+ 	  if(acc_width-1-init<ch_width)//si es el primer ch a dibujar en la ventana
+ 		  {ch_line_init=ch_width-(acc_width-1-init);//determina la primer linea del ch que comienza a dibujarse
+ 		 USARTSendStrAndWait("3\r");
+ 		  }
+ 	  else
+ 		  {ch_line_init=0; //si no, se dibuja el ch desde el principio.
+ 		 USARTSendStrAndWait("4\r");
+ 		  }
 
- 	  if(i==init)
- 	  	  {CtPutCharWin(str[ch_index-1],x,y,ch_width-(acc_width-init-1),0);
+ 	  if(init+leng < acc_width-1)//es el último ch en la ventana
+ 		  {ch_line_end=ch_width-(acc_width-1-(init+leng));//determina la última linea del caracter que se dibuja
+ 		 USARTSendStrAndWait("5\r");
+ 		  }
+ 	  else
+ 		  {ch_line_end=ch_width;//si no, se dibuja hasta la linea final
+ 		 USARTSendStrAndWait("6\r");
+ 		  }
 
- 	  	  }
+ 	  CtPutCharWin(str[ch_index-1],x,l,ch_line_init,ch_line_end-ch_line_init);
+ 	  l+=ch_line_end-ch_line_init+1;
+ 	  i+=ch_line_end-ch_line_init+1;
 
- 	 }
-
- while(*str!=0)
-	{acc_width+=CtCharWidth(*str);
-	 if(acc_width-init >= 0)
-		 if(acc_width-init < CtCharWidth(*str))
-	 CtPutChar(*str,h,l);
-	 l+=ct_last_char_width+1;
-	 str++;
-
-	 //Un pixel de separación entre caracteres
-	 for(uint8_t i=0;i<ct_font_height;i++)
-		if(ct_font_color==BLACK)
-			CtSetDot(h+i,l,WHITE);
-		else
-			CtSetDot(h+i,l,BLACK);
-	}
-
+ 	  //Un pixel de separación entre caracteres
+ 	  for(uint8_t k=0;k<ct_font_height;k++)
+ 		  if(ct_font_color==BLACK)
+ 			  CtSetDot(x+k,l,WHITE);
+ 		  else
+ 			  CtSetDot(x+k,l,BLACK);
+  	 }
 }
