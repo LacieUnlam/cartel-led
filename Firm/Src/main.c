@@ -79,6 +79,11 @@ int main(void)
 	CtClear();
 	CtUpdate();
 
+	CtSelectFont((PGM_P)font_vec[0],BLACK);
+	CtPuts("prueba",1,1);
+	CtPutsWin("prueba",8,6,6,15);
+	CtUpdate();
+
 	//bucle prinsipal
 	while(1)
 		{
@@ -89,7 +94,7 @@ int main(void)
 										break;
 				  case CMD_INVALID:	CtCommPrint(MSG_INV_COMM);
 				  						break;
-				  case INVALID_DATA:	CtCommPrint(MSG_INV_DATA);
+				  case INVALID_DATA:CtCommPrint(MSG_INV_DATA);
 										break;
 				  case CMD_BRI_UP:	bri_duty+=5;
 				  	  	  	  	  	if(bri_duty>100)
