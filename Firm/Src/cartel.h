@@ -83,7 +83,7 @@ uint8_t CtDataRead(const uint8_t* ptr); //Funcion interna para lectura de los da
 int8_t CtCharWidth(char c);//devuelve el ancho en puntos del caracter.  -1 si no existe
 uint8_t CtPutChar(char c, uint8_t x, uint8_t y);
 void CtPuts(char *str,uint8_t x,uint8_t y);
-
-
+uint8_t CtPutCharWin(char c, uint8_t x, uint8_t y, uint8_t init, uint8_t leng);
+void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng);
 
 #endif
