@@ -79,11 +79,6 @@ int main(void)
 	CtClear();
 	CtUpdate();
 
-	CtSelectFont((PGM_P)font_vec[0],BLACK);
-	CtPuts("prueba",1,1);
-	CtPutsWin("prueba",8,6,6,15);
-	CtUpdate();
-
 	//bucle prinsipal
 	while(1)
 		{

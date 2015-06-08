@@ -17,3 +17,8 @@
 *.ps
 *.*bak
 
+/Firm/Src/*.bak
+/Hard/control/full/hard_control.000
+/Firm/CartelLED.doxyfile
+/Hard/control/3 lineas/*.000
+/Hard/control/full/Postscript/*.ps

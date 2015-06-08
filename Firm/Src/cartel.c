@@ -11,7 +11,9 @@
 
 #include "cartel.h"
 
-#include "usart.h"
+//#include "usart.h"
+
+//#define DEBUG 0
 
 //#define CT_REFRESH_TIME 1500 //tiempo de refresco en uSeg, para demora de SIPO de 1uSeg.
 //tiempo de refresco medidos en uSeg
@@ -508,36 +510,33 @@ void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng)
  uint16_t i=init;
 
  while(i<init+leng)
- 	 {USARTSendStrAndWait("1\r");
-	  while(str[ch_index]!=0 && acc_width<=i)
+ 	 {//USARTSendStrAndWait("1\r");
+	  if(str[ch_index]==0)//si el caracter actual es el nulo, sale
+	   		  return;
+	  while(acc_width<=i)
  		{ch_width=CtCharWidth(str[ch_index]);
  		 acc_width+=ch_width+1; //un pixel de separacion entre caracteres
  		 ch_index++;
  		}
 
- 	USARTSendStrAndWait("2\r");
-
- 	  if(str[ch_index-1]==0)//si el caracter actual es el nulo, sale
- 		  return;
-
- 	  //dif_width=acc_width-i-1;//calcula la cantidad de lineas a representar del caracter actual
+ 	//USARTSendStrAndWait("2\r");
 
  	  if(acc_width-1-init<ch_width)//si es el primer ch a dibujar en la ventana
  		  {ch_line_init=ch_width-(acc_width-1-init);//determina la primer linea del ch que comienza a dibujarse
- 		 USARTSendStrAndWait("3\r");
+ 		// USARTSendStrAndWait("3\r");
  		  }
  	  else
  		  {ch_line_init=0; //si no, se dibuja el ch desde el principio.
- 		 USARTSendStrAndWait("4\r");
+ 		 //USARTSendStrAndWait("4\r");
  		  }
 
  	  if(init+leng < acc_width-1)//es el último ch en la ventana
  		  {ch_line_end=ch_width-(acc_width-1-(init+leng));//determina la última linea del caracter que se dibuja
- 		 USARTSendStrAndWait("5\r");
+ 		 //USARTSendStrAndWait("5\r");
  		  }
  	  else
  		  {ch_line_end=ch_width;//si no, se dibuja hasta la linea final
- 		 USARTSendStrAndWait("6\r");
+ 		 //USARTSendStrAndWait("6\r");
  		  }
 
  	  CtPutCharWin(str[ch_index-1],x,l,ch_line_init,ch_line_end-ch_line_init);
