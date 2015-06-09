@@ -551,3 +551,5 @@ void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng)
  			  CtSetDot(x+k,l,BLACK);
   	 }
 }
+
+void CtScroll(char *str, uint8_t x, uint8_t y, uint8_t winleng)
