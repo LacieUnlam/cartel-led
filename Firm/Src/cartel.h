@@ -81,9 +81,18 @@ void CtRec(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t color, ui
 void CtSelectFont(const char* font, uint8_t color); //Seleciona tipo y color de fuente
 uint8_t CtDataRead(const uint8_t* ptr); //Funcion interna para lectura de los datos de la fuente
 int8_t CtCharWidth(char c);//devuelve el ancho en puntos del caracter.  -1 si no existe
+uint16_t CtStrLeng(char *str);
 uint8_t CtPutChar(char c, uint8_t x, uint8_t y);
 void CtPuts(char *str,uint8_t x,uint8_t y);
+
+//Imprime las "leng" columnas de puntos un caracter, desde la columna "init"
 uint8_t CtPutCharWin(char c, uint8_t x, uint8_t y, uint8_t init, uint8_t leng);
+//Imprime las "leng" columnas de puntos de una cadena, desde la columna init
 void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng);
+/*Imprime y escrolea un texto en una ventana.
+ * 	winleng = longitud de la ventana en columnas de puntos
+ * 	count = puntero a una variable usada por la función para guardar datos internos.
+ */
+void CtScroll(char *str, uint8_t x, uint8_t y, uint8_t winleng, uint16_t *count);
 
 #endif

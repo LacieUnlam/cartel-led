@@ -52,6 +52,9 @@ int main(void)
 	uint8_t f_cro_sec=0;
 	uint8_t f_cro_regr=0;
 	uint8_t ds10=0;
+	uint8_t ds5=0;
+	//uint16_t scroll_count=0;
+	//uint16_t scroll_count1=0;
 
 	CtInit();
 	CtCommInit();
@@ -77,11 +80,6 @@ int main(void)
 	font_vec[4]=0;
 
 	CtClear();
-	CtUpdate();
-
-	CtSelectFont((PGM_P)font_vec[0],BLACK);
-	CtPuts("prueba",1,1);
-	CtPutsWin("prueba",8,6,6,15);
 	CtUpdate();
 
 	//bucle prinsipal
@@ -223,14 +221,24 @@ int main(void)
 			 }
 
 		 //bucle de cronometros
-		 if(f_cro_pri && f_timer)
-		   {char s_cro_pri[7];
-		    char s_cro_sec[4];
-		    char s_cro_regr[4];
+		 if(f_timer)//cada 0.1 segundos
+		   {f_timer=0;
 
-			f_timer=0;
-		    if(++ds10==9)//cada un segundo
+		    if(++ds5==1)//cada 0.2 segundos
+		    {ds5=0;
+		     //CtClear();
+		     //CtSelectFont((PGM_P)font_vec[0],BLACK);
+		     //CtScroll("Universidad Nacional de La Matanza",3,5,40,&scroll_count);
+		     //CtScroll("Laboratorio Abierto de la Carrera de Ingenieria en Electronica",15,5,40,&scroll_count1);
+		     //CtUpdate();
+		    }
+
+
+		    if(f_cro_pri && ++ds10==9)//cada un segundo
 		      {ds10=0;
+		       char s_cro_pri[7];
+		       char s_cro_sec[4];
+		       char s_cro_regr[4];
 		       CtClear();
 
 		       if(f_cro_regr)//regresiva para empezar

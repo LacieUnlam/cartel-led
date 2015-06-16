@@ -11,7 +11,7 @@
 
 #include "cartel.h"
 
-//#include "usart.h"
+#include "usart.h"
 
 //#define DEBUG 0
 
@@ -348,6 +348,17 @@ int8_t CtCharWidth(char c)
  return (CtDataRead(ct_font+FONT_WIDTH_TABLE+c)); //recupera de la tabla de anchos, el que se corresponde con el caracter requerido
 }
 
+uint16_t CtStrLeng(char *str)
+{uint16_t leng=0;
+
+ while(*str!=0)
+ 	 {leng+=CtCharWidth(*str)+1;
+	  str++;
+ 	 }
+
+ return leng;
+}
+
 uint8_t CtPutChar(char c, uint8_t x, uint8_t y) 
 {
 	uint8_t width = 0;
@@ -434,7 +445,9 @@ void CtPuts(char *str,uint8_t x,uint8_t y)
 			CtSetDot(h+i,l,BLACK);
 	}
 }
-
+/*
+ * Imprime las "leng" columnas de puntos un caracter, desde la columna "init"
+ */
 uint8_t CtPutCharWin(char c, uint8_t x, uint8_t y, uint8_t init, uint8_t leng)
 {uint8_t width = 0;
  ct_last_char_height=0;
@@ -499,6 +512,9 @@ uint8_t CtPutCharWin(char c, uint8_t x, uint8_t y, uint8_t init, uint8_t leng)
  return 1;
 }
 
+/*
+ * Imprime las "leng" columnas de puntos de una cadena, desde la columna init
+ */
 void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng)
 {uint8_t l=y;
  uint8_t ch_width=0;
@@ -506,12 +522,10 @@ void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng)
  uint8_t ch_line_end;
  uint16_t acc_width=0; //ancho en pixeles acumulado de toda la cadena
  uint8_t ch_index=0;//indice del caracter en la cadena
-
  uint16_t i=init;
 
  while(i<init+leng)
- 	 {//USARTSendStrAndWait("1\r");
-	  if(str[ch_index]==0)//si el caracter actual es el nulo, sale
+ 	 {if(str[ch_index]==0)//si el caracter actual es el nulo, sale
 	   		  return;
 	  while(acc_width<=i)
  		{ch_width=CtCharWidth(str[ch_index]);
@@ -519,25 +533,15 @@ void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng)
  		 ch_index++;
  		}
 
- 	//USARTSendStrAndWait("2\r");
-
  	  if(acc_width-1-init<ch_width)//si es el primer ch a dibujar en la ventana
- 		  {ch_line_init=ch_width-(acc_width-1-init);//determina la primer linea del ch que comienza a dibujarse
- 		// USARTSendStrAndWait("3\r");
- 		  }
+ 		  ch_line_init=ch_width-(acc_width-1-init);//determina la primer linea del ch que comienza a dibujarse
  	  else
- 		  {ch_line_init=0; //si no, se dibuja el ch desde el principio.
- 		 //USARTSendStrAndWait("4\r");
- 		  }
+ 		  ch_line_init=0; //si no, se dibuja el ch desde el principio.
 
  	  if(init+leng < acc_width-1)//es el último ch en la ventana
- 		  {ch_line_end=ch_width-(acc_width-1-(init+leng));//determina la última linea del caracter que se dibuja
- 		 //USARTSendStrAndWait("5\r");
- 		  }
+ 		  ch_line_end=ch_width-(acc_width-1-(init+leng));//determina la última linea del caracter que se dibuja
  	  else
- 		  {ch_line_end=ch_width;//si no, se dibuja hasta la linea final
- 		 //USARTSendStrAndWait("6\r");
- 		  }
+ 		  ch_line_end=ch_width;//si no, se dibuja hasta la linea final
 
  	  CtPutCharWin(str[ch_index-1],x,l,ch_line_init,ch_line_end-ch_line_init);
  	  l+=ch_line_end-ch_line_init+1;
@@ -552,4 +556,25 @@ void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng)
   	 }
 }
 
-void CtScroll(char *str, uint8_t x, uint8_t y, uint8_t winleng)
+void CtScroll(char *str, uint8_t x, uint8_t y, uint8_t winleng, uint16_t *count)
+{uint8_t pos_y,leng;
+ uint16_t init;
+
+ if(*count<winleng)
+ 	 {pos_y=y+winleng-*count;
+ 	  leng=*count;
+ 	  init=0;
+ 	 }
+ else
+ 	 {pos_y=y;
+	  leng=winleng;
+	  init=*count-winleng;
+ 	 }
+
+ CtPutsWin(str,x,pos_y,init,leng);
+
+ (*count)++;
+
+ if((*count)>CtStrLeng(str)+winleng)
+	 *count=0;
+}
