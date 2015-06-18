@@ -30,6 +30,10 @@
 #define CMD_CRO_CONF	18
 #define CMD_BRI_UP		19
 #define CMD_BRI_DW		20
+#define CMD_PRG_MSG1	21
+#define CMD_PRG_MSG2	22
+#define CMD_PRG_EXE		23
+#define CMD_SCROLL		24
 
 //Definicion de mensajes
 #define MSG_HELP		0

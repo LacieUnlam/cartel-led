@@ -40,8 +40,11 @@ int main(void)
 	char* tok;
 	uint8_t color=BLACK;
 	uint8_t *font_vec[5];
+
+	//variables control brillo
 	uint8_t bri_duty=100;
 
+	//variables cronometros
 	uint16_t set_cr_prim=180;
 	uint16_t set_cr_sec=30;
 	uint8_t set_regr=5;
@@ -51,8 +54,13 @@ int main(void)
 	uint8_t f_cro_pri=0;
 	uint8_t f_cro_sec=0;
 	uint8_t f_cro_regr=0;
+
+	//variables timers
 	uint8_t ds10=0;
 	uint8_t ds5=0;
+
+	//variables scroll y memoria
+	uint8_t f_mem_exe=1;//indica si esta en modo ejecución de texto automático
 	//uint16_t scroll_count=0;
 	//uint16_t scroll_count1=0;
 
@@ -147,9 +155,9 @@ int main(void)
 											CtCommPrint(MSG_INV_DATA);
 										else
 											{posx1=aux16_1;
-											posy1=aux16_2;
-											CtGoto(posx1,posy1);
-											CtCommPrint(MSG_OK);
+											 posy1=aux16_2;
+											 CtGoto(posx1,posy1);
+											 CtCommPrint(MSG_OK);
 											}
 										break;
 				  case CMD_CRO_CONF:	set_cr_prim=atoi(USARTGetStr(','))*60+atoi(USARTGetStr(','));
@@ -200,7 +208,7 @@ int main(void)
 												 CtCommPrint(MSG_OK);
 												}
 											break;
-				  case CMD_OP:		if(USARTIfOver())
+				  case CMD_OP:	if(USARTIfOver())
 								  CtCommPrint(MSG_OVER);
 								else
 								  {strcpy(str,USARTGetStr('\r'));
@@ -216,7 +224,9 @@ int main(void)
 								   CtCommPrint(MSG_OK);
 								  }
 								break;
-				  default:					break;
+				  case CMD_PRG_MSG1:
+										break;
+				  default:		break;
 				 }
 			 }
 
@@ -226,11 +236,13 @@ int main(void)
 
 		    if(++ds5==1)//cada 0.2 segundos
 		    {ds5=0;
-		     //CtClear();
+		     if(f_mem_exe==1)
+		     {//CtClear();
 		     //CtSelectFont((PGM_P)font_vec[0],BLACK);
 		     //CtScroll("Universidad Nacional de La Matanza",3,5,40,&scroll_count);
 		     //CtScroll("Laboratorio Abierto de la Carrera de Ingenieria en Electronica",15,5,40,&scroll_count1);
 		     //CtUpdate();
+		     }
 		    }
 
 

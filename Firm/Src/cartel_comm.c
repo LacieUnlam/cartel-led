@@ -85,6 +85,9 @@ uint8_t CtCommDecoder()
 											 case '2':  waited_char=0;
 											 			return CMD_BRI_DW;
 											 			break;
+											 case 'm':  waited_char='\r';
+											 	 	 	waited_command=CMD_PRG_MSG1;
+											 			break;
 											 case '\r': waited_char=0;
 														return CMD_INVALID;
 														break;
@@ -208,6 +211,13 @@ uint8_t CtCommDecoder()
 					   			  	  	  	  {waited_char=0;
 					   			  	  	  	   waited_command=CMD_NONE;
 					   			  	  	  	   return CMD_OP;
+					   			  	  	  	  }
+					   			  	  	  break;
+					   case CMD_PRG_MSG1: aux=(char)usart_db[usart_index_end-1];
+					   			  	  	  if(aux=='\r')
+					   			  	  	  	  {waited_char=0;
+					   			  	  	  	   waited_command=CMD_NONE;
+					   			  	  	  	   return CMD_PRG_MSG1;
 					   			  	  	  	  }
 					   			  	  	  break;
 					   default:			waited_command=CMD_NONE;
