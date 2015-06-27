@@ -79,14 +79,20 @@ uint8_t CtCommDecoder()
 											 case 'o':  waited_char='\r';
 											 			waited_command=CMD_OP;
 											 			break;
-											 case '8':  waited_char=0;
+											 case '+':  waited_char=0;
 											 			return CMD_BRI_UP;
 											 			break;
-											 case '2':  waited_char=0;
+											 case '-':  waited_char=0;
 											 			return CMD_BRI_DW;
 											 			break;
-											 case 'm':  waited_char='\r';
+											 case '1':  waited_char='\r';
 											 	 	 	waited_command=CMD_PRG_MSG1;
+											 			break;
+											 case '2':  waited_char='\r';
+											 	 	 	waited_command=CMD_PRG_MSG2;
+											 			break;
+											 case 'm':  waited_char='\r';
+											 	 	 	waited_command=CMD_PRG_EXE;
 											 			break;
 											 case '\r': waited_char=0;
 														return CMD_INVALID;
@@ -220,6 +226,20 @@ uint8_t CtCommDecoder()
 					   			  	  	  	   return CMD_PRG_MSG1;
 					   			  	  	  	  }
 					   			  	  	  break;
+					   case CMD_PRG_MSG2: aux=(char)usart_db[usart_index_end-1];
+					   			  	  	  if(aux=='\r')
+					   			  	  	  	  {waited_char=0;
+					   			  	  	  	   waited_command=CMD_NONE;
+					   			  	  	  	   return CMD_PRG_MSG2;
+					   			  	  	  	  }
+					   			  	  	  break;
+					   case CMD_PRG_EXE:  waited_command=CMD_NONE;
+										  waited_char=0;
+										  if(((char)USARTGetChar())=='\r')
+											return CMD_PRG_EXE;
+										  else
+											return CMD_INVALID;
+										  break;
 					   default:			waited_command=CMD_NONE;
 										waited_char=0;
 										break;
@@ -248,8 +268,8 @@ void CtCommPrint(uint8_t msg)
 														\r i: invertir\
 														\r lv-hxxx: linea.  v:vertical, h:horizontal, xxx:longitud\
 														\r rxxx,yyy,z: rectángulo.  xxx:ancho, yyy:alto, z:0-vacio 1-lleno\
-														\r 8: aumenta brillo\
-														\r 2: disminuye brillo\
+														\r +: aumenta brillo\
+														\r -: disminuye brillo\
 														\r ?: ayuda"));
 							USARTSendStrAndWait_P(PSTR("\r"));
 							break;

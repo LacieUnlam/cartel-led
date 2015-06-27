@@ -13,6 +13,7 @@
 #include <avr/pgmspace.h>
 #include <stdlib.h>
 #include <string.h>
+#include <avr/eeprom.h>
 
 #include "USART.h"
 
@@ -33,6 +34,9 @@
 uint8_t f_timer=0;
 uint8_t f_cro_pause=0; //actua sobre ambos cronos
 uint16_t cont_timer_bri=0;
+
+char EEMEM ee_msg1[100]="Cartel LED";
+char EEMEM ee_msg2[100]="LACIE";
 
 int main(void)
 {	int16_t posx1=1,posy1=1,aux16,aux16_1=1,aux16_2=1;
@@ -61,11 +65,15 @@ int main(void)
 
 	//variables scroll y memoria
 	uint8_t f_mem_exe=1;//indica si esta en modo ejecución de texto automático
+	char msg1[100],msg2[100];
 	//uint16_t scroll_count=0;
 	//uint16_t scroll_count1=0;
 
 	CtInit();
 	CtCommInit();
+
+	eeprom_read_block((void*)msg1,(const void*)ee_msg1,100);
+	eeprom_read_block((void*)msg2,(const void*)ee_msg2,100);
 
 	sei();
 
@@ -92,16 +100,15 @@ int main(void)
 
 	//bucle prinsipal
 	while(1)
-		{
-		 if(USARTRxCount())
+		{if(USARTRxCount())
 			 {switch(CtCommDecoder())
 				 {case 0:				break;
 				  case CMD_HELP:	CtCommPrint(MSG_HELP);
-										break;
+										      break;
 				  case CMD_INVALID:	CtCommPrint(MSG_INV_COMM);
-				  						break;
-				  case INVALID_DATA:CtCommPrint(MSG_INV_DATA);
-										break;
+				  						      break;
+				  case INVALID_DATA:  CtCommPrint(MSG_INV_DATA);
+										          break;
 				  case CMD_BRI_UP:	bri_duty+=5;
 				  	  	  	  	  	if(bri_duty>100)
 				  	  	  	  	  		bri_duty=100;
@@ -112,120 +119,144 @@ int main(void)
 				  	  	  	  	  		bri_duty=0;
 				  	  	  	  	  	break;
 				  case CMD_UPDATE:	CtUpdate();
-										CtCommPrint(MSG_OK);
-				  				  		break;
-				  case CMD_CLEAR:	CtClear();
-				  						CtCommPrint(MSG_OK);
-				  				  		break;
-				  case CMD_CRONO:	if(!f_cro_pri)
-							  	  	  {cont_cro_pri=set_cr_prim;
-							  	  	   cont_cro_regr=set_regr;
-							  	  	   f_cro_regr=1;
-							  	  	   f_cro_pri=1;
-							  	  	   f_cro_sec=0;
-							  	  	   f_cro_pause=0;
-							  	  	   f_timer=1;
-							  	  	   ds10=8; //fuerza una primer entrada al bucle de cronometros
-							  	  	   CtUpdate();
-							  	  	  }
-									else
-									  {f_cro_pri=0;
-									   f_cro_sec=0;
-									  }
+										        CtCommPrint(MSG_OK);
+										        break;
+				  case CMD_CLEAR:	  CtClear();
+				  						      CtCommPrint(MSG_OK);
+				  						      break;
+				  case CMD_CRONO:	  if(!f_cro_pri)
+							  	  	        {cont_cro_pri=set_cr_prim;
+							  	  	         cont_cro_regr=set_regr;
+							  	  	         f_cro_regr=1;
+							  	  	         f_cro_pri=1;
+							  	  	         f_cro_sec=0;
+							  	  	         f_cro_pause=0;
+							  	  	         f_timer=1;
+							  	  	         ds10=8; //fuerza una primer entrada al bucle de cronometros
+							  	  	         CtUpdate();
+							  	  	        }
+									          else
+									            {f_cro_pri=0;
+									             f_cro_sec=0;
+									            }
 
-				  					CtCommPrint(MSG_OK);
-				  					break;
+				  					        CtCommPrint(MSG_OK);
+				  					        break;
 				  case CMD_CRO_SEC:	  if(f_cro_sec)
-				  	  	  	  	  	  	  f_cro_sec=0;
+				  	  	  	  	  	  	f_cro_sec=0;
 				  	  	  	  	  	  else
-				  	  	  	  	  	  	  {f_cro_sec=1;
-				  	  	  	  	  	  	   cont_cro_sec=set_cr_sec;
-				  	  	  	  	  	  	  }
+				  	  	  	  	  	  	{f_cro_sec=1;
+				  	  	  	  	  	  	 cont_cro_sec=set_cr_sec;
+				  	  	  	  	  	  	}
 				  	  	  	  	  	  CtCommPrint(MSG_OK);
-					  	  	  	  	  break;
+				  	  	  	  	  	  break;
 				  case CMD_CRO_PAUSE: if(f_cro_pause)
 					  	  	  	  	  	  f_cro_pause=0;
 				  	  	  	  	  	  else
 				  	  	  	  	  		  f_cro_pause=1;
 				  	  	  	  	  	  CtCommPrint(MSG_OK);
-					  	  	  	  	  break;
-				  case CMD_GOTO:		aux16_1=atoi(USARTGetStr(','));
-										aux16_2=atoi(USARTGetStr('\r'));
-										if(aux16_1==0 || aux16_2==0)
-											CtCommPrint(MSG_INV_DATA);
-										else
-											{posx1=aux16_1;
-											 posy1=aux16_2;
-											 CtGoto(posx1,posy1);
-											 CtCommPrint(MSG_OK);
-											}
-										break;
+				  	  	  	  	  	  break;
+				  case CMD_GOTO:      aux16_1=atoi(USARTGetStr(','));
+										          aux16_2=atoi(USARTGetStr('\r'));
+										          if(aux16_1==0 || aux16_2==0)
+										            CtCommPrint(MSG_INV_DATA);
+										          else
+										            {posx1=aux16_1;
+										             posy1=aux16_2;
+										             CtGoto(posx1,posy1);
+										             CtCommPrint(MSG_OK);
+										            }
+										          break;
 				  case CMD_CRO_CONF:	set_cr_prim=atoi(USARTGetStr(','))*60+atoi(USARTGetStr(','));
-				  	  	  	  	  	  	set_cr_sec=atoi(USARTGetStr(','));
-				  						set_regr=atoi(USARTGetStr('\r'));
-				  						CtCommPrint(MSG_OK);
-				  						break;
+				  	  	  	  	  	  set_cr_sec=atoi(USARTGetStr(','));
+				  	  	  	  	  	  set_regr=atoi(USARTGetStr('\r'));
+				  	  	  	  	  	  CtCommPrint(MSG_OK);
+				  	  	  	  	  	  break;
 				  case CMD_FONT_SEL:	aux16=((uint8_t)USARTGetChar())-0x30;
-											if(aux16>0 && aux16<=5 && font_vec[aux16-1])
-												{CtSelectFont((PGM_P)font_vec[aux16-1], color);
-												 CtCommPrint(MSG_OK);
-												}
-											else
-												CtCommPrint(MSG_INV_FONT);
-											break;
-				  case CMD_TEXT:		if(USARTIfOver())
-												CtCommPrint(MSG_OVER);
-											else
-												{strcpy(str,USARTGetStr('\r'));
-												 CtPuts(str,posx1,posy1);
-												 CtCommPrint(MSG_OK);
-												}
-											break;
-				  case CMD_POINT:		CtSetDot(posx1,posy1,color);
-											CtCommPrint(MSG_OK);
-											break;
+											        if(aux16>0 && aux16<=5 && font_vec[aux16-1])
+											          {CtSelectFont((PGM_P)font_vec[aux16-1], color);
+											           CtCommPrint(MSG_OK);
+											          }
+											        else
+											          CtCommPrint(MSG_INV_FONT);
+											        break;
+				  case CMD_TEXT:		  if(USARTIfOver())
+												        CtCommPrint(MSG_OVER);
+											        else
+											          {strcpy(str,USARTGetStr('\r'));
+											           CtPuts(str,posx1,posy1);
+											           CtCommPrint(MSG_OK);
+											          }
+											        break;
+				  case CMD_POINT:		  CtSetDot(posx1,posy1,color);
+											        CtCommPrint(MSG_OK);
+											        break;
 				  case CMD_INVERT:		CtInvert();
-											CtCommPrint(MSG_OK);
-											break;
-				  case CMD_LINE:		switch(USARTGetChar())
-												{case 'v':	CtLineV(posy1,posx1,posx1+atoi(USARTGetStr('\r'))-1,color);
-															CtCommPrint(MSG_OK);
-															break;
-												 case 'h':	CtLineH(posx1,posy1,posy1+atoi(USARTGetStr('\r'))-1,color);
-															CtCommPrint(MSG_OK);
-															break;
-												 default: CtCommPrint(MSG_INV_DATA); break;
-												}
-											break;
+											        CtCommPrint(MSG_OK);
+											        break;
+				  case CMD_LINE:		  switch(USARTGetChar())
+												        {case 'v':	CtLineV(posy1,posx1,posx1+atoi(USARTGetStr('\r'))-1,color);
+												                    CtCommPrint(MSG_OK);
+												                    break;
+												         case 'h':	CtLineH(posx1,posy1,posy1+atoi(USARTGetStr('\r'))-1,color);
+												                    CtCommPrint(MSG_OK);
+												                    break;
+												         default: CtCommPrint(MSG_INV_DATA); break;
+												        }
+											        break;
 				  case CMD_RECT:		aux16=atoi(USARTGetStr(',')); //ancho
-											aux16_1=atoi(USARTGetStr(','));	//alto
-											aux16_2=atoi(USARTGetStr('\r'));	//lleno-vacio
-											if(-16>aux16_1 || aux16_1>16 || aux16_1==0 || -CT_ROW_DOTS>aux16 || aux16>CT_ROW_DOTS || aux16==0
-													|| (aux16_2!=0 && aux16_2!=1))
-												 CtCommPrint(MSG_INV_DATA);
-											else
-												{CtRec(posx1,posy1,posx1+aux16_1-1,posy1+aux16-1,color, aux16_2);
-												 CtCommPrint(MSG_OK);
-												}
-											break;
+											      aux16_1=atoi(USARTGetStr(','));	//alto
+											      aux16_2=atoi(USARTGetStr('\r'));	//lleno-vacio
+											      if(-16>aux16_1 || aux16_1>16 || aux16_1==0 || -CT_ROW_DOTS>aux16 || aux16>CT_ROW_DOTS || aux16==0
+											          || (aux16_2!=0 && aux16_2!=1))
+											        CtCommPrint(MSG_INV_DATA);
+											      else
+											        {CtRec(posx1,posy1,posx1+aux16_1-1,posy1+aux16-1,color, aux16_2);
+											         CtCommPrint(MSG_OK);
+											        }
+											      break;
 				  case CMD_OP:	if(USARTIfOver())
-								  CtCommPrint(MSG_OVER);
-								else
-								  {strcpy(str,USARTGetStr('\r'));
-								   CtClear();
-								   CtSelectFont((PGM_P)font_vec[0],BLACK);
-								   tok=strtok(str,",");
-								   if(tok!=NULL)
-								     CtPuts(tok,4,3);
-								   tok=strtok(NULL,",");
-								   if(tok!=NULL)
-								     CtPuts(tok,15,3);
-								   CtUpdate();
-								   CtCommPrint(MSG_OK);
-								  }
-								break;
-				  case CMD_PRG_MSG1:
-										break;
+								          CtCommPrint(MSG_OVER);
+								        else
+								          {strcpy(str,USARTGetStr('\r'));
+								           CtClear();
+								           CtSelectFont((PGM_P)font_vec[0],BLACK);
+								           tok=strtok(str,",");
+								           if(tok!=NULL)
+								             CtPuts(tok,4,3);
+								           tok=strtok(NULL,",");
+								           if(tok!=NULL)
+								             CtPuts(tok,15,3);
+								           CtUpdate();
+								           CtCommPrint(MSG_OK);
+								          }
+								        break;
+				  case CMD_PRG_MSG1:	if(USARTIfOver())
+										            CtCommPrint(MSG_OVER);
+									            else
+									              {strcpy(msg1,USARTGetStr('\r'));
+									               eeprom_write_block((const void*)msg1,(void*)ee_msg1,strlen(msg1)+1);//"+1" incluye el caracter de fin de linea
+									               CtCommPrint(MSG_OK);
+									              }
+									            break;
+          case CMD_PRG_MSG2:  if(USARTIfOver())
+                                CtCommPrint(MSG_OVER);
+                              else
+                                {strcpy(msg2,USARTGetStr('\r'));
+                                 eeprom_write_block((const void*)msg2,(void*)ee_msg2,strlen(msg2)+1);//"+1" incluye el caracter de fin de linea
+                                 CtCommPrint(MSG_OK);
+                                }
+                              break;
+          case CMD_PRG_EXE:   if(f_mem_exe)
+                                {f_mem_exe=0;
+
+                                }
+                              else
+                                {f_mem_exe=1;
+
+                                }
+                              CtCommPrint(MSG_OK);
+                              break;
 				  default:		break;
 				 }
 			 }
@@ -235,16 +266,15 @@ int main(void)
 		   {f_timer=0;
 
 		    if(++ds5==1)//cada 0.2 segundos
-		    {ds5=0;
-		     if(f_mem_exe==1)
-		     {//CtClear();
-		     //CtSelectFont((PGM_P)font_vec[0],BLACK);
-		     //CtScroll("Universidad Nacional de La Matanza",3,5,40,&scroll_count);
-		     //CtScroll("Laboratorio Abierto de la Carrera de Ingenieria en Electronica",15,5,40,&scroll_count1);
-		     //CtUpdate();
-		     }
-		    }
-
+		      {ds5=0;
+		        if(f_mem_exe==1)
+		          {//CtClear();
+		           //CtSelectFont((PGM_P)font_vec[0],BLACK);
+		           //CtScroll("Universidad Nacional de La Matanza",3,5,40,&scroll_count);
+		           //CtScroll("Laboratorio Abierto de la Carrera de Ingenieria en Electronica",15,5,40,&scroll_count1);
+		           //CtUpdate();
+		          }
+		      }
 
 		    if(f_cro_pri && ++ds10==9)//cada un segundo
 		      {ds10=0;
@@ -283,8 +313,8 @@ int main(void)
 		    	    if(cont_cro_pri%60==0)
 		    	    	strcat(str,"0");
 
-				    if(cont_cro_pri!=0)
-				    	cont_cro_pri--;
+		    	    if(cont_cro_pri!=0)
+		    	      cont_cro_pri--;
 
 		    	    CtSelectFont((PGM_P)font_vec[1],BLACK);
 		    	    CtPuts(str,POS_CRON_X,POS_CRON_Y);
