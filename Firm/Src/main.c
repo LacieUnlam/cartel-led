@@ -31,12 +31,17 @@
 #define POS_CRON_X	7
 #define POS_CRON_Y	14
 
+#define EE_MSG_LENGHT 100 //longitud máxima de los mensajes en eeprom
+
 uint8_t f_timer=0;
 uint8_t f_cro_pause=0; //actua sobre ambos cronos
 uint16_t cont_timer_bri=0;
 
-char EEMEM ee_msg1[100]="Cartel LED";
-char EEMEM ee_msg2[100]="LACIE";
+char EEMEM ee_msg1[EE_MSG_LENGHT]="Cartel LED";
+char EEMEM ee_msg2[EE_MSG_LENGHT]="LACIE";
+/*  NOTA: Para que los strings tengan condiciones iniciales en EEPROM, no olvidar configurar gcc para que genere
+ *  el archivo .eep donde estará la imagen inicial de la EEPROM, y al AVRDUDE para que realize la escritura con ese archivo.
+ */
 
 int main(void)
 {	int16_t posx1=1,posy1=1,aux16,aux16_1=1,aux16_2=1;
@@ -61,19 +66,19 @@ int main(void)
 
 	//variables timers
 	uint8_t ds10=0;
-	uint8_t ds5=0;
 
 	//variables scroll y memoria
-	uint8_t f_mem_exe=1;//indica si esta en modo ejecución de texto automático
-	char msg1[100],msg2[100];
-	//uint16_t scroll_count=0;
-	//uint16_t scroll_count1=0;
+	uint8_t f_mem_exe=1;//indica si esta en modo ejecución de texto automático (por defecto desde el arranque)
+	char msg1[EE_MSG_LENGHT],msg2[EE_MSG_LENGHT];
+	uint16_t scroll_count=0;
+	uint16_t scroll_count1=0;
 
 	CtInit();
 	CtCommInit();
 
-	eeprom_read_block((void*)msg1,(const void*)ee_msg1,100);
-	eeprom_read_block((void*)msg2,(const void*)ee_msg2,100);
+	//Inicializa los mensajes con lo guardado en eeprom
+	eeprom_read_block((void*)msg1,(const void*)ee_msg1,EE_MSG_LENGHT);
+	eeprom_read_block((void*)msg2,(const void*)ee_msg2,EE_MSG_LENGHT);
 
 	sei();
 
@@ -249,13 +254,12 @@ int main(void)
                               break;
           case CMD_PRG_EXE:   if(f_mem_exe)
                                 {f_mem_exe=0;
-
+                                 USARTSendStrAndWait_P(PSTR("reproduccion=0\r"));
                                 }
                               else
                                 {f_mem_exe=1;
-
+                                 USARTSendStrAndWait_P(PSTR("reproduccion=1\r"));
                                 }
-                              CtCommPrint(MSG_OK);
                               break;
 				  default:		break;
 				 }
@@ -265,15 +269,12 @@ int main(void)
 		 if(f_timer)//cada 0.1 segundos
 		   {f_timer=0;
 
-		    if(++ds5==1)//cada 0.2 segundos
-		      {ds5=0;
-		        if(f_mem_exe==1)
-		          {//CtClear();
-		           //CtSelectFont((PGM_P)font_vec[0],BLACK);
-		           //CtScroll("Universidad Nacional de La Matanza",3,5,40,&scroll_count);
-		           //CtScroll("Laboratorio Abierto de la Carrera de Ingenieria en Electronica",15,5,40,&scroll_count1);
-		           //CtUpdate();
-		          }
+		    if(f_mem_exe==1)//scroleado de eeprom
+		      {CtClear();
+		       CtSelectFont((PGM_P)font_vec[0],BLACK);
+		       CtScroll(msg1,3,5,40,&scroll_count);
+		       CtScroll(msg2,15,5,40,&scroll_count1);
+		       CtUpdate();
 		      }
 
 		    if(f_cro_pri && ++ds10==9)//cada un segundo
