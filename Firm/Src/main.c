@@ -254,10 +254,14 @@ int main(void)
                               break;
           case CMD_PRG_EXE:   if(f_mem_exe)
                                 {f_mem_exe=0;
+                                 CtClear();
+                                 CtUpdate();
                                  USARTSendStrAndWait_P(PSTR("reproduccion=0\r"));
                                 }
                               else
                                 {f_mem_exe=1;
+                                 scroll_count=0;
+                                 scroll_count1=0;
                                  USARTSendStrAndWait_P(PSTR("reproduccion=1\r"));
                                 }
                               break;
@@ -271,7 +275,7 @@ int main(void)
 
 		    if(f_mem_exe==1)//scroleado de eeprom
 		      {CtClear();
-		       CtSelectFont((PGM_P)font_vec[0],BLACK);
+		       CtSelectFont((PGM_P)font_vec[1],BLACK);
 		       CtScroll(msg1,3,5,40,&scroll_count);
 		       CtScroll(msg2,15,5,40,&scroll_count1);
 		       CtUpdate();
