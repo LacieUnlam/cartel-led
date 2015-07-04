@@ -31,7 +31,7 @@
 #define POS_CRON_X	7
 #define POS_CRON_Y	14
 
-#define EE_MSG_LENGHT 100 //longitud máxima de los mensajes en eeprom
+#define EE_MSG_LENGHT 300 //longitud máxima de los mensajes en eeprom
 
 uint8_t f_timer=0;
 uint8_t f_cro_pause=0; //actua sobre ambos cronos
@@ -45,7 +45,7 @@ char EEMEM ee_msg2[EE_MSG_LENGHT]="LACIE";
 
 int main(void)
 {	int16_t posx1=1,posy1=1,aux16,aux16_1=1,aux16_2=1;
-	char str[100],auxstr[20];
+	char str[300],auxstr[20];
 	char* tok;
 	uint8_t color=BLACK;
 	uint8_t *font_vec[5];
@@ -262,6 +262,8 @@ int main(void)
                                 {f_mem_exe=1;
                                  scroll_count=0;
                                  scroll_count1=0;
+                                 f_cro_pri=0;
+                                 f_cro_sec=0;
                                  USARTSendStrAndWait_P(PSTR("reproduccion=1\r"));
                                 }
                               break;
@@ -275,8 +277,9 @@ int main(void)
 
 		    if(f_mem_exe==1)//scroleado de eeprom
 		      {CtClear();
-		       CtSelectFont((PGM_P)font_vec[1],BLACK);
-		       CtScroll(msg1,3,5,40,&scroll_count);
+		       CtSelectFont((PGM_P)font_vec[0],BLACK);
+		       //CtScroll(msg1,3,5,40,&scroll_count);
+		       CtPuts(msg1,3,5);
 		       CtScroll(msg2,15,5,40,&scroll_count1);
 		       CtUpdate();
 		      }

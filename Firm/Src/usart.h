@@ -55,7 +55,7 @@
 #endif
 
 //******Variables globales
-#define	USART_DB_LENGTH	100	//Longitud del buffer de datos
+#define	USART_DB_LENGTH	300	//Longitud del buffer de datos
 volatile uint8_t usart_db[USART_DB_LENGTH];	//buffer de datos
 volatile uint8_t usart_index_init	//Puntero al buffer de datos
 				,usart_index_end		//Cantidad de datos del buffer
