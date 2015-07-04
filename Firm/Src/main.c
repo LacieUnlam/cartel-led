@@ -275,8 +275,9 @@ int main(void)
 
 		    if(f_mem_exe==1)//scroleado de eeprom
 		      {CtClear();
-		       CtSelectFont((PGM_P)font_vec[1],BLACK);
-		       CtScroll(msg1,3,5,40,&scroll_count);
+		       CtSelectFont((PGM_P)font_vec[0],BLACK);
+		       //CtScroll(msg1,3,5,40,&scroll_count);
+		       CtPuts(msg1,3,5);
 		       CtScroll(msg2,15,5,40,&scroll_count1);
 		       CtUpdate();
 		      }
