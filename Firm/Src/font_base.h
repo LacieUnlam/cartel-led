@@ -45,7 +45,7 @@
 #define FONT_BASE_WIDTH 10
 #define FONT_BASE_HEIGHT 8
 
-static uint8_t Font_Base[] PROGMEM = {
+const static uint8_t Font_Base[] PROGMEM = {
     0x0A, 0xBE, // size
     0x0A, // width
     0x08, // height

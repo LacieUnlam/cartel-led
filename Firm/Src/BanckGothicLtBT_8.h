@@ -45,7 +45,7 @@
 #define BANCKGOTHICLTBT_8_WIDTH 10
 #define BANCKGOTHICLTBT_8_HEIGHT 8
 
-static uint8_t BanckGothicLtBT_8[] PROGMEM = {
+const static uint8_t BanckGothicLtBT_8[] PROGMEM = {
     0x0B, 0x8E, // size
     0x0A, // width
     0x08, // height

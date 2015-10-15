@@ -26,7 +26,7 @@
 #define CT_MAP_B		2
 
 //definicion de operadores logicos entre mapas
-#define CT_AND	0	//ambos en 1 (Intersecci髇 da 1)
+#define CT_AND	0	//ambos en 1 (Intersecci贸n da 1)
 #define CT_OR	1	//cualquiera en 1. (Union da 1)
 #define CT_XOR	2	//uno solo en 1 (las figuras de un mapa negativiza las del otro)
 #define CT_XNOR	3	//ambos en 0 o en 1.
@@ -49,7 +49,7 @@
 //	Variables globales
 volatile uint8_t ct_map[3][CT_BYTES_LENGTH]; //matriz con los mapas
 volatile uint8_t ct_map_sel; //seleccion del cartel a editar
-volatile uint8_t ct_pos_byte, ct_pos_bit; //posici髇 l骻ica en el cartel
+volatile uint8_t ct_pos_byte, ct_pos_bit; //posici贸n l贸gica en el cartel
 volatile uint8_t ct_last_char_width; //para calcular la distancia entre caracteres
 volatile uint8_t ct_last_char_height; //para calcular la distancia entre lineas
 volatile uint8_t ct_font_height;
@@ -73,7 +73,7 @@ uint8_t CtGoto(int16_t x, int16_t y);	//Situa el cursor en un punto del cartel. 
 uint8_t CtSetDot(int16_t x, int16_t y, uint8_t color);	//Dibuja un punto en memoria.  Devuelve 1 si hay overflow del cartel.
 void CtLineH(uint16_t x, uint16_t y1, uint16_t y2, uint8_t color);	//linea horizontal
 void CtLineV(uint16_t y, uint16_t x1, uint16_t x2, uint8_t color);	//linea vertical
-void CtRec(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t color, uint8_t full); //dibuja un rect醤gulo lleno o vacio
+void CtRec(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t color, uint8_t full); //dibuja un rect谩ngulo lleno o vacio
 
 //void CtDrawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color); //Dibuja una linea //TODO: a implementar
 
@@ -91,7 +91,7 @@ uint8_t CtPutCharWin(char c, uint8_t x, uint8_t y, uint8_t init, uint8_t leng);
 void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng);
 /*Imprime y escrolea un texto en una ventana.
  * 	winleng = longitud de la ventana en columnas de puntos
- * 	count = puntero a una variable usada por la funci髇 para guardar datos internos.
+ * 	count = puntero a una variable usada por la funci贸n para guardar datos internos.
  */
 void CtScroll(char *str, uint8_t x, uint8_t y, uint8_t winleng, uint16_t *count);
 

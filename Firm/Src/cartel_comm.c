@@ -258,16 +258,16 @@ void CtCommPrint(uint8_t msg)
 														\r b: borrar\
 														\r gxxx,yyy: goto. xxx:pos x, yyy:pos y\
                             \r dmm,ss,ccc,s: config.  MinCP,SegCP,SegCS,SegRegr\
-														\r c: cronómetro (5seg + 3 min)\
-														\r s: cronómetro secundario ascendente\
-														\r e: pausar cronómetros (principal y secundario)\
+														\r c: cronÃ³metro (5seg + 3 min)\
+														\r s: cronÃ³metro secundario ascendente\
+														\r e: pausar cronÃ³metros (principal y secundario)\
 														\r fx: fuente. x:1 - 5, pueden o no estar definidas\
 														\r tx: texto.\
 	                          \r ox: Oponentes, separados por coma.\
 														\r p: punto\
 														\r i: invertir\
 														\r lv-hxxx: linea.  v:vertical, h:horizontal, xxx:longitud\
-														\r rxxx,yyy,z: rectángulo.  xxx:ancho, yyy:alto, z:0-vacio 1-lleno\
+														\r rxxx,yyy,z: rectÃ¡ngulo.  xxx:ancho, yyy:alto, z:0-vacio 1-lleno\
 														\r +: aumenta brillo\
 														\r -: disminuye brillo\
 	                          \r 1x: texto en eeprom 1.\
@@ -276,18 +276,12 @@ void CtCommPrint(uint8_t msg)
 														\r ?: ayuda"));
 							        USARTSendStrAndWait_P(PSTR("\r"));
 							        break;
-	 case MSG_INV_COMM: 	USARTSendStrAndWait_P(PSTR("(error) comando no válido\r"));
-							          break;
-	 case MSG_OK: 			USARTSendStrAndWait_P(PSTR("ok\r"));
-	 						        break;
-	 case MSG_INV_DATA: 	USARTSendStrAndWait_P(PSTR("(error) datos no válidos\r"));
-	 						          break;
-	 case MSG_INV_FONT: 	USARTSendStrAndWait_P(PSTR("(error) fuente no disponible\r"));
-	                      break;
-	 case MSG_OVER: 		USARTSendStrAndWait_P(PSTR("(error) la cadena es demasiado larga\r"));
-	                    break;
-	 default:				USARTSendStrAndWait_P(PSTR("(error interno) codigo de mensaje comm no válido\r"));
-	                break;
+	 case MSG_INV_COMM: 	USARTSendStrAndWait_P(PSTR("(error) comando no vÃ¡lido\r")); break;
+	 case MSG_OK: 			USARTSendStrAndWait_P(PSTR("ok\r")); break;
+	 case MSG_INV_DATA: 	USARTSendStrAndWait_P(PSTR("(error) datos no vÃ¡lidos\r")); break;
+	 case MSG_INV_FONT: 	USARTSendStrAndWait_P(PSTR("(error) fuente no disponible\r")); break;
+	 case MSG_OVER: 		USARTSendStrAndWait_P(PSTR("(error) la cadena es demasiado larga\r")); break;
+	 default:				USARTSendStrAndWait_P(PSTR("(error interno) codigo de mensaje comm no vÃ¡lido\r")); break;
 	}
 
  USARTStartRx();

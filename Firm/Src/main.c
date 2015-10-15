@@ -15,7 +15,7 @@
 #include <string.h>
 #include <avr/eeprom.h>
 
-#include "USART.h"
+#include "usart.h"
 
 #include "cartel.h"
 #include "cartel_comm.h"
@@ -31,7 +31,7 @@
 #define POS_CRON_X	7
 #define POS_CRON_Y	14
 
-#define EE_MSG_LENGHT 300 //longitud m·xima de los mensajes en eeprom
+#define EE_MSG_LENGHT 300 //longitud m√°xima de los mensajes en eeprom
 
 uint8_t f_timer=0;
 uint8_t f_cro_pause=0; //actua sobre ambos cronos
@@ -40,7 +40,7 @@ uint16_t cont_timer_bri=0;
 char EEMEM ee_msg1[EE_MSG_LENGHT]="Cartel LED";
 char EEMEM ee_msg2[EE_MSG_LENGHT]="LACIE";
 /*  NOTA: Para que los strings tengan condiciones iniciales en EEPROM, no olvidar configurar gcc para que genere
- *  el archivo .eep donde estar· la imagen inicial de la EEPROM, y al AVRDUDE para que realize la escritura con ese archivo.
+ *  el archivo .eep donde estar√° la imagen inicial de la EEPROM, y al AVRDUDE para que realize la escritura con ese archivo.
  */
 
 int main(void)
@@ -48,7 +48,7 @@ int main(void)
 	char str[300],auxstr[20];
 	char* tok;
 	uint8_t color=BLACK;
-	uint8_t *font_vec[5];
+	const uint8_t *font_vec[5];
 
 	//variables control brillo
 	uint8_t bri_duty=100;
@@ -66,9 +66,10 @@ int main(void)
 
 	//variables timers
 	uint8_t ds10=0;
+	uint8_t ds5=0;
 
 	//variables scroll y memoria
-	uint8_t f_mem_exe=1;//indica si esta en modo ejecuciÛn de texto autom·tico (por defecto desde el arranque)
+	uint8_t f_mem_exe=1;//indica si esta en modo ejecuci√≥n de texto autom√°tico (por defecto desde el arranque)
 	char msg1[EE_MSG_LENGHT],msg2[EE_MSG_LENGHT];
 	uint16_t scroll_count=0;
 	uint16_t scroll_count1=0;

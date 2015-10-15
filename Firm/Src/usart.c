@@ -2,7 +2,7 @@
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 
-#include "USART.h"
+#include "usart.h"
 
 
 /**********************************************************
@@ -71,12 +71,12 @@ void USARTAddStrToDB_P(char* str)
 }
 
 
-//*****Funciones para transmisi髇 de cadenas
+//*****Funciones para transmisi贸n de cadenas
 
 uint8_t USARTSendStr(char* str)
 {uint8_t wait_flag=0; //indica si hubo o no que realizar un envio con espera de retorno por exceso en la cadena.
 
- while(usart_state!=USART_STATE_NONE); //espera que termine cualquier operaci髇 en curso
+ while(usart_state!=USART_STATE_NONE); //espera que termine cualquier operaci贸n en curso
 
  USARTIndexersClr();
  while(*str!=0)
@@ -100,7 +100,7 @@ uint8_t USARTSendStr_P(char* str)
 {uint8_t wait_flag=0; //indica si hubo o no que realizar un envio con espera de retorno por exceso en la cadena.
  char c;
 
- while(usart_state!=USART_STATE_NONE); //espera que termine cualquier operaci髇 en curso
+ while(usart_state!=USART_STATE_NONE); //espera que termine cualquier operaci贸n en curso
 
  USARTIndexersClr();
  while((c=pgm_read_byte(str)))
@@ -121,7 +121,7 @@ uint8_t USARTSendStr_P(char* str)
 }
 
 void USARTSendStrAndWait(char *str)
-{while(usart_state!=USART_STATE_NONE); //espera que termine cualquier operaci髇 en curso
+{while(usart_state!=USART_STATE_NONE); //espera que termine cualquier operaci贸n en curso
 
  USARTIndexersClr();
  while(*str!=0)
@@ -141,7 +141,7 @@ void USARTSendStrAndWait(char *str)
 void USARTSendStrAndWait_P(char *str)
 {char c;
 
- while(usart_state!=USART_STATE_NONE); //espera que termine cualquier operaci髇 en curso
+ while(usart_state!=USART_STATE_NONE); //espera que termine cualquier operaci贸n en curso
 
  USARTIndexersClr();
  while((c=pgm_read_byte(str)))
@@ -167,7 +167,7 @@ void USARTSendStrAndWait_P(char *str)
 //*****Inicializa para una recepcion
 
 void USARTStartRx()
-{while(usart_state!=USART_STATE_NONE); //espera que termine cualquier operaci髇 en curso
+{while(usart_state!=USART_STATE_NONE); //espera que termine cualquier operaci贸n en curso
 
  USARTIndexersClr();
  usart_rx_over=0;

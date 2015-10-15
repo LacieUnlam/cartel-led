@@ -45,7 +45,7 @@
 #define BROADWAYBT_8_WIDTH 10
 #define BROADWAYBT_8_HEIGHT 9
 
-static uint8_t BroadwayBT_8[] PROGMEM = {
+const static uint8_t BroadwayBT_8[] PROGMEM = {
     0x0F, 0xDE, // size
     0x0A, // width
     0x09, // height

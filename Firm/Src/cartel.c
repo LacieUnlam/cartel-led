@@ -39,7 +39,7 @@
 //#define CT_DUTY_STEPS (8000/CT_REFRESH_TIME) //cantidad de pasos por cuadro, suponiendo FR=25
 
 #define CT_FR 39 //FrameRate
-#define CT_FP (1000000/CT_FR) //Período de cuadro, en uSeg.
+#define CT_FP (1000000/CT_FR) //PerÃ­odo de cuadro, en uSeg.
 #define CT_TIME_PER_DUTY (CT_FP/100)//tiempo por paso de duty, en uSeg.
 #define CT_DUTY_MIN (CT_CLEAR_TIME/CT_TIME_PER_DUTY)
 #define CT_DUTY_MAX (100-(CT_REFRESH_TIME/CT_TIME_PER_DUTY))
@@ -108,8 +108,8 @@ void CtRefresh()
 	 byte[i]=0;
 
  for(int8_t modulo=0; modulo<MODULO_FILE_QTY; modulo++)	//una pasada por cada columna de modulos
-	for(int8_t mod_fila=3; mod_fila>=0; mod_fila--)						//una pasada por cada fila en el módulo
-		{for(int8_t mod_col=7; mod_col>=0; mod_col--)					//una pasada por cada columna en el módulo
+	for(int8_t mod_fila=3; mod_fila>=0; mod_fila--)						//una pasada por cada fila en el mÃ³dulo
+		{for(int8_t mod_col=7; mod_col>=0; mod_col--)					//una pasada por cada columna en el mÃ³dulo
 			{
 #if (FILES_QTY>0)
 			 //carga de byte 0
@@ -174,7 +174,7 @@ void CtRefresh()
 }
 
 void CtClrScr()
-{for(uint8_t i=0;i<(MODULO_FILE_QTY*4);i++) //modulos por fila x 4 filas (de 8 LEDs) por módulo
+{for(uint8_t i=0;i<(MODULO_FILE_QTY*4);i++) //modulos por fila x 4 filas (de 8 LEDs) por mÃ³dulo
 	 MSIPOAddByte(0,0,0,0,0,0);
  MSIPOLatchLoad();
 }
@@ -227,7 +227,7 @@ uint8_t CtGoto(int16_t x, int16_t y) //x->vertical, y->horizontal.  Desde esquin
  if(f_x_neg) x+=CT_COL_DOTS-1;
  if(f_y_neg) y+=CT_ROW_DOTS-1;
 
- ct_pos_bit=x%8; //determina la posición dentro del byte
+ ct_pos_bit=x%8; //determina la posiciÃ³n dentro del byte
  ct_pos_byte=CT_ROW_DOTS*(x/8)+y; //determina el byte en el mapa
 
  return f_over;
@@ -286,7 +286,7 @@ void CtDrawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color)
 {int8_t pend;
  int8_t error;
  
- //Para el análisis, suponer al cartel rotado 90 grados en sentido antihorario, para verlo
+ //Para el anÃ¡lisis, suponer al cartel rotado 90 grados en sentido antihorario, para verlo
  //en la forma cartesiana comun.
  if(x2==x1) //linea vertical
 	{if(y2-y1>0)
@@ -387,7 +387,7 @@ for(uint8_t i=0; i<bytes; i++) //una vuelta por cada byte de altura de la fuente
 	 for(uint8_t j=0; j<width; j++)//una vuelta por cada byte de la pagina
 	 	 {uint8_t data = CtDataRead(ct_font+index+page+j);
 
-	 	  if(ct_font_height < (i+1)*8)//si es la última fila de bytes del caracter, y con ella se supera la altura del caracter.
+	 	  if(ct_font_height < (i+1)*8)//si es la Ãºltima fila de bytes del caracter, y con ella se supera la altura del caracter.
 	 	  	  {data >>= (i+1)*8-ct_font_height;	//no se porque esto
 	 	  	  }
 		
@@ -396,14 +396,14 @@ for(uint8_t i=0; i<bytes; i++) //una vuelta por cada byte de altura de la fuente
 			
 	 	  for(uint8_t k=0;k<8;k++)//un ciclo por cada bit dibujado del byte
 	 	  	  {if(i*8+k>ct_font_height)
-	 	  		  break;//Si el punto queda por arriba del tamaño de la fuente, se interrumpe la impresión del byte
+	 	  		  break;//Si el punto queda por arriba del tamaÃ±o de la fuente, se interrumpe la impresiÃ³n del byte
 
 	 	  	   if(bit_is_set(data,k))//dibuja el punto
 	 	  		  CtSetDot(x+(i*8)+k,y+j,BLACK);
 	 	  	   else
 	 	  		  CtSetDot(x+(i*8)+k,y+j,WHITE);
 				
-	 	  	   if(ct_font_color==BLACK)//al salir la función, se habra guardado en ct_last_char_height la altura de este caracter.
+	 	  	   if(ct_font_color==BLACK)//al salir la funciÃ³n, se habra guardado en ct_last_char_height la altura de este caracter.
 	 	  	   	   {if((bit_is_set(data,k)) && ((i*8)+k>ct_last_char_height))
 	 	  	   		   ct_last_char_height=(i*8)+k;
 	 	  	   	   }
@@ -437,7 +437,7 @@ void CtPuts(char *str,uint8_t x,uint8_t y)
 		}
 	 str++;
 	 
-	 //Un pixel de separación entre caracteres
+	 //Un pixel de separaciÃ³n entre caracteres
 	 for(uint8_t i=0;i<ct_font_height;i++)
 		if(ct_font_color==BLACK)
 			CtSetDot(h+i,l,WHITE);
@@ -469,7 +469,7 @@ uint8_t CtPutCharWin(char c, uint8_t x, uint8_t y, uint8_t init, uint8_t leng)
  index = index*bytes+charCount+FONT_WIDTH_TABLE;
  width = CtDataRead(ct_font+FONT_WIDTH_TABLE+c); //recupera de la tabla de anchos, el que se corresponde con el caracter requerido
 
- if(leng==0) //leng=0 no es válido, y se considerará como el total del ancho de la fuente
+ if(leng==0) //leng=0 no es vÃ¡lido, y se considerarÃ¡ como el total del ancho de la fuente
 	 leng=width;
 
  // last but not least, draw the character
@@ -480,7 +480,7 @@ uint8_t CtPutCharWin(char c, uint8_t x, uint8_t y, uint8_t init, uint8_t leng)
 		   if(j>=init && j<init+leng)//se lee el byte si esta dentro del rango de lineas a graficar
 			   data = CtDataRead(ct_font+index+page+j);
 
-		   if(ct_font_height < (i+1)*8)//si es la última fila de bytes del caracter, y con ella se supera la altura del caracter.
+		   if(ct_font_height < (i+1)*8)//si es la Ãºltima fila de bytes del caracter, y con ella se supera la altura del caracter.
 			   {data >>= (i+1)*8-ct_font_height;	//no se porque esto
 			   }
 
@@ -489,14 +489,14 @@ uint8_t CtPutCharWin(char c, uint8_t x, uint8_t y, uint8_t init, uint8_t leng)
 
 		   for(uint8_t k=0;k<8;k++)//un ciclo por cada bit dibujado del byte
 		   	   {if(i*8+k>ct_font_height)
-		   		   break;//Si el punto queda por arriba del tamaño de la fuente, se interrumpe la impresión del byte
+		   		   break;//Si el punto queda por arriba del tamaÃ±o de la fuente, se interrumpe la impresiÃ³n del byte
 
 		   	   	if(bit_is_set(data,k))//dibuja el punto
 		   	   		CtSetDot(x+(i*8)+k,y+j-init,BLACK);
 		   	   	else
 		   	   		CtSetDot(x+(i*8)+k,y+j-init,WHITE);
 
-		   	   	if(ct_font_color==BLACK)//al salir la función, se habra guardado en ct_last_char_height la altura de este caracter.
+		   	   	if(ct_font_color==BLACK)//al salir la funciÃ³n, se habra guardado en ct_last_char_height la altura de este caracter.
 		   	   		{if((bit_is_set(data,k)) && ((i*8)+k>ct_last_char_height))
 		   	   			ct_last_char_height=(i*8)+k;
 		   	   		}
@@ -538,8 +538,8 @@ void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng)
  	  else
  		  ch_line_init=0; //si no, se dibuja el ch desde el principio.
 
- 	  if(init+leng < acc_width-1)//es el último ch en la ventana
- 		  ch_line_end=ch_width-(acc_width-1-(init+leng));//determina la última linea del caracter que se dibuja
+ 	  if(init+leng < acc_width-1)//es el Ãºltimo ch en la ventana
+ 		  ch_line_end=ch_width-(acc_width-1-(init+leng));//determina la Ãºltima linea del caracter que se dibuja
  	  else
  		  ch_line_end=ch_width;//si no, se dibuja hasta la linea final
 
@@ -547,7 +547,7 @@ void CtPutsWin(char *str, uint8_t x, uint8_t y, uint16_t init, uint8_t leng)
  	  l+=ch_line_end-ch_line_init+1;
  	  i+=ch_line_end-ch_line_init+1;
 
- 	  //Un pixel de separación entre caracteres
+ 	  //Un pixel de separaciÃ³n entre caracteres
  	  for(uint8_t k=0;k<ct_font_height;k++)
  		  if(ct_font_color==BLACK)
  			  CtSetDot(x+k,l,WHITE);

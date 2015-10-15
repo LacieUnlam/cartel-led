@@ -45,7 +45,7 @@
 #define ARIALBLACK_8_WIDTH 10
 #define ARIALBLACK_8_HEIGHT 8
 
-static uint8_t ArialBlack_8[] PROGMEM = {
+const static uint8_t ArialBlack_8[] PROGMEM = {
     0x0D, 0x66, // size
     0x0A, // width
     0x08, // height
