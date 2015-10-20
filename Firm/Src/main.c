@@ -33,6 +33,10 @@
 
 #define EE_MSG_LENGHT 300 //longitud máxima de los mensajes en eeprom
 
+#define LEDSTAT_DIR DDRD
+#define LEDSTAT_DAT PORTD
+#define LEDSTAT_PIN 6
+
 uint8_t f_timer=0;
 uint8_t f_cro_pause=0; //actua sobre ambos cronos
 uint16_t cont_timer_bri=0;
@@ -66,7 +70,6 @@ int main(void)
 
 	//variables timers
 	uint8_t ds10=0;
-	uint8_t ds5=0;
 
 	//variables scroll y memoria
 	uint8_t f_mem_exe=1;//indica si esta en modo ejecución de texto automático (por defecto desde el arranque)
@@ -76,6 +79,10 @@ int main(void)
 
 	CtInit();
 	CtCommInit();
+
+	//inicializa pin para leds tatami
+	LEDSTAT_DIR|=_BV(LEDSTAT_PIN);
+	LEDSTAT_DAT&=~_BV(LEDSTAT_PIN);
 
 	//Inicializa los mensajes con lo guardado en eeprom
 	eeprom_read_block((void*)msg1,(const void*)ee_msg1,EE_MSG_LENGHT);
@@ -104,7 +111,7 @@ int main(void)
 	CtClear();
 	CtUpdate();
 
-	//bucle prinsipal
+	//bucle principal
 	while(1)
 		{if(USARTRxCount())
 			 {switch(CtCommDecoder())
@@ -276,7 +283,8 @@ int main(void)
 		 if(f_timer)//cada 0.1 segundos
 		   {f_timer=0;
 
-		    if(f_mem_exe==1)//scroleado de eeprom
+		    //scroleado de eeprom
+		    if(f_mem_exe==1)
 		      {CtClear();
 		       CtSelectFont((PGM_P)font_vec[0],BLACK);
 		       //CtScroll(msg1,3,5,40,&scroll_count);
@@ -285,7 +293,18 @@ int main(void)
 		       CtUpdate();
 		      }
 
-		    if(f_cro_pri && ++ds10==9)//cada un segundo
+		    //destello leds tatami
+		    if(f_cro_regr)
+		      {if(ds10==0)
+		          LEDSTAT_DAT|=_BV(LEDSTAT_PIN); //prenter leds
+		       if(ds10==6)
+		          LEDSTAT_DAT&=~_BV(LEDSTAT_PIN); //apagar leds
+		      }
+		    else
+		      LEDSTAT_DAT&=~_BV(LEDSTAT_PIN); //apagar leds
+
+		    //tareas cada un segundo (regresiva, cont principal y secundario )
+		    if(f_cro_pri && ++ds10==9)
 		      {ds10=0;
 		       char s_cro_pri[7];
 		       char s_cro_sec[4];

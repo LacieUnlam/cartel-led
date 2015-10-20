@@ -45,7 +45,7 @@
 #ifndef USART_H
 #define USART_H
 
-//para las funciones inline que incluyen funciones de la librerÌa.
+//para las funciones inline que incluyen funciones de la librer√≠a.
 #ifndef _AVR_INTERRUPT_H_
 #include <avr/interrupt.h>
 #endif
@@ -173,7 +173,7 @@ inline void USARTSetBaudRate(uint32_t baud_rate)
 /* Inicializa a 0 todos los indices */
 void USARTIndexersClr();
 
-/* Indica si el DB est· lleno, ya sea de dados ingresados para ser transmitidos, o de datos recibidos */
+/* Indica si el DB est√° lleno, ya sea de dados ingresados para ser transmitidos, o de datos recibidos */
 uint8_t USARTIfDBFull();
 
 
@@ -207,26 +207,26 @@ void USARTAddWordToDB(uint16_t data);
 void USARTAddCharToDB(char c);
 
 /* Agrega un string a usart_db.  La cadena debe poseer el caracter de fin de linea.
- * La funciÛn posee dos versiones, con y sin uso de las librerÌas progmem.
- * El caracter de fin de linea no ser· transmitido.
+ * La funci√≥n posee dos versiones, con y sin uso de las librer√≠as progmem.
+ * El caracter de fin de linea no ser√° transmitido.
  * Parametros:				*str	//Puntero al string a agregar
  */
 void USARTAddStrToDB(char* str);
 void USARTAddStrToDB_P(char* str);
 
-/* EnvÌa una cadena por el puerto.  La funciÛn retorna luego de la carga del DB, dejando a las rutinas de interrupcion
- * del puerto el completar el envio.  Sin embargo, si la cadena es mayor que la que acepta el DB, la funcion har· varios envÌos
- * consecutivos, quedando en espera de la finalizaciÛn de cada una de ellas.
- * La funciÛn posee dos versiones, con y sin uso de las librerÌas progmem.
- * El caracter de fin de linea no ser· transmitido.
+/* Env√≠a una cadena por el puerto.  La funci√≥n retorna luego de la carga del DB, dejando a las rutinas de interrupcion
+ * del puerto el completar el envio.  Sin embargo, si la cadena es mayor que la que acepta el DB, la funcion har√° varios env√≠os
+ * consecutivos, quedando en espera de la finalizaci√≥n de cada una de ellas.
+ * La funci√≥n posee dos versiones, con y sin uso de las librer√≠as progmem.
+ * El caracter de fin de linea no ser√° transmitido.
  * Parametros:				*str	//puntero a la cadena
  */
 uint8_t USARTSendStr_P(char* str);
 uint8_t USARTSendStr(char* str);
 
 /* Agrega un string a usart_db, inicia la transmision y espera a que finalice.  La cadena debe poseer el caracter de fin de linea.
- * El caracter de fin de linea no ser· transmitido.
- * La funciÛn posee dos versiones, con y sin uso de las librerÌas progmem.
+ * El caracter de fin de linea no ser√° transmitido.
+ * La funci√≥n posee dos versiones, con y sin uso de las librer√≠as progmem.
  * Parametros:				*str	//Puntero al string a enviar
  */
 void USARTSendStrAndWait(char *str);
@@ -248,7 +248,7 @@ void USARTStartRx();
 /* Informa la cantidad de bytes recibidos, aun sin ser leidos. */
 uint8_t USARTRxCount();
 
-/* Informa si hubo overflow del DB durante la recepciÛn de datos*/
+/* Informa si hubo overflow del DB durante la recepci√≥n de datos*/
 uint8_t USARTIfOver();
 
 //*****Recuperacion de los datos recibidos
@@ -272,10 +272,10 @@ uint8_t USARTGetByte();
 uint16_t USARTGetWord();
 
 /*	Devuelve un puntero a cadena, a usart_db, desde la posicion en la que se encuentre usart_index_init.
- *	La cadena recibida por el puerto deber· contener el caracter que indique el fin de linea, especificado
- *	por end_ch.  La posicion donde se encuentra end_ch, ser· reemplazada por 0, caracter de fin de linea.
- *	Si el caracter de fin de linea no es encontrado, la funciÛn retornar· 0, y los indices ser·n reseteados.
- *	Luego de la lectura, end_index_init apuntar· a la posicion siguiente al caracter de fin de linea.
+ *	La cadena recibida por el puerto deber√° contener el caracter que indique el fin de linea, especificado
+ *	por end_ch.  La posicion donde se encuentra end_ch, ser√° reemplazada por 0, caracter de fin de linea.
+ *	Si el caracter de fin de linea no es encontrado, la funci√≥n retornar√° 0, y los indices ser√°n reseteados.
+ *	Luego de la lectura, end_index_init apuntar√° a la posicion siguiente al caracter de fin de linea.
  *	Si luego de la lectura no restan datos, los indices son vueltos a 0.
  */
 char* USARTGetStr(char end_ch);
