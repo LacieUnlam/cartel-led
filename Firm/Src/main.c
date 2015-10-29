@@ -296,12 +296,15 @@ int main(void)
 		    //destello leds tatami
 		    if(f_cro_regr)
 		      {if(ds10==0)
-		          LEDSTAT_DAT|=_BV(LEDSTAT_PIN); //prenter leds
+		          LEDSTAT_DAT|=_BV(LEDSTAT_PIN); //prender leds
 		       if(ds10==6)
 		          LEDSTAT_DAT&=~_BV(LEDSTAT_PIN); //apagar leds
 		      }
 		    else
-		      LEDSTAT_DAT&=~_BV(LEDSTAT_PIN); //apagar leds
+		       if(f_cro_pri)
+		           LEDSTAT_DAT&=~_BV(LEDSTAT_PIN); //apagar leds
+		       else
+		           LEDSTAT_DAT|=_BV(LEDSTAT_PIN); //prender leds
 
 		    //tareas cada un segundo (regresiva, cont principal y secundario )
 		    if(f_cro_pri && ++ds10==9)
