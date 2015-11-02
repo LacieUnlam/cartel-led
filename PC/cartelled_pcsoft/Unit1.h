@@ -92,6 +92,21 @@ __published:	// IDE-managed Components
         TVrWave *VrWaveContReg;
         TVrWave *VrWavePunch;
         TButton *ButtonPunch;
+        TBevel *Bevel4;
+        TButton *Button7;
+        TButton *Button8;
+        TLabel *Label6;
+        TVrWave *VrWave1;
+        TButton *Button9;
+        TButton *Button10;
+        TVrWave *VrWave2;
+        TButton *Button11;
+        TVrWave *VrWave3;
+        TButton *Button12;
+        TButton *Button13;
+        TVrWave *VrWave4;
+        TVrWave *VrWave5;
+        TButton *Button14;
         void __fastcall Button1Click(TObject *Sender);
         void __fastcall CommPort1DataReceived(TObject *Sender,
           const char *Buffer, unsigned Length);
@@ -121,6 +136,14 @@ __published:	// IDE-managed Components
         void __fastcall TimerParpadeoTimer(TObject *Sender);
         void __fastcall RadioButtonCOM3Click(TObject *Sender);
         void __fastcall ButtonPunchClick(TObject *Sender);
+        void __fastcall Button7Click(TObject *Sender);
+        void __fastcall Button8Click(TObject *Sender);
+        void __fastcall Button9Click(TObject *Sender);
+        void __fastcall Button10Click(TObject *Sender);
+        void __fastcall Button11Click(TObject *Sender);
+        void __fastcall Button12Click(TObject *Sender);
+        void __fastcall Button13Click(TObject *Sender);
+        void __fastcall Button14Click(TObject *Sender);
 private:	// User declarations
                 AnsiString RxData;
                 int CommandType;

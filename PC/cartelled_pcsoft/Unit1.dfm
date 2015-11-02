@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 185
-  Top = 104
+  Left = 10
+  Top = 105
   Width = 1334
   Height = 762
   Caption = 'LACIE - INTERFAZ DE COMANDOS PARA CARTEL LED'
@@ -22,7 +22,7 @@ object Form1: TForm1
   object Image1: TImage
     Left = 0
     Top = 0
-    Width = 1326
+    Width = 1318
     Height = 100
     Align = alTop
     AutoSize = True
@@ -1986,17 +1986,17 @@ object Form1: TForm1
       7F918E171EC648B5FE4455A8601AB4B5FF0015E2AEDFDE8BAB9FE367FFD9}
   end
   object Splitter1: TSplitter
-    Left = 1016
+    Left = 1008
     Top = 153
     Width = 8
-    Height = 536
+    Height = 532
     Cursor = crHSplit
     Align = alRight
   end
   object GroupBox2: TGroupBox
     Left = 0
     Top = 100
-    Width = 1326
+    Width = 1318
     Height = 53
     Align = alTop
     Caption = 'Conexi'#243'n'
@@ -2004,14 +2004,14 @@ object Form1: TForm1
     object Label3: TLabel
       Left = 260
       Top = 21
-      Width = 71
+      Width = 73
       Height = 13
       Caption = 'Velocidad [bps]'
     end
     object Label1: TLabel
       Left = 429
       Top = 21
-      Width = 30
+      Width = 32
       Height = 13
       Caption = '8 N 1'
       Font.Charset = DEFAULT_CHARSET
@@ -2022,13 +2022,13 @@ object Form1: TForm1
       ParentFont = False
     end
     object Bevel1: TBevel
-      Left = 469
+      Left = 464
       Top = 10
       Width = 1
       Height = 37
     end
     object Bevel2: TBevel
-      Left = 734
+      Left = 742
       Top = 8
       Width = 6
       Height = 37
@@ -2038,6 +2038,19 @@ object Form1: TForm1
       Top = 10
       Width = 1
       Height = 37
+    end
+    object Bevel4: TBevel
+      Left = 633
+      Top = 10
+      Width = 1
+      Height = 37
+    end
+    object Label6: TLabel
+      Left = 641
+      Top = 23
+      Width = 22
+      Height = 13
+      Caption = 'Brillo'
     end
     object RadioButton1: TRadioButton
       Left = 79
@@ -2096,7 +2109,7 @@ object Form1: TForm1
         '256000')
     end
     object Button5: TButton
-      Left = 477
+      Left = 469
       Top = 16
       Width = 74
       Height = 25
@@ -2105,9 +2118,9 @@ object Form1: TForm1
       OnClick = Button5Click
     end
     object Button6: TButton
-      Left = 562
+      Left = 546
       Top = 16
-      Width = 155
+      Width = 77
       Height = 25
       Caption = 'Borrar'
       TabOrder = 6
@@ -2125,26 +2138,101 @@ object Form1: TForm1
     object ButtonPunch: TButton
       Left = 752
       Top = 8
-      Width = 369
+      Width = 105
       Height = 41
       Caption = #161' '#161' '#161' '#161' '#161' Punch ! ! ! ! !'
       TabOrder = 7
       OnClick = ButtonPunchClick
     end
+    object Button7: TButton
+      Left = 670
+      Top = 10
+      Width = 28
+      Height = 38
+      Caption = '+'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -32
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 8
+      OnClick = Button7Click
+    end
+    object Button8: TButton
+      Left = 706
+      Top = 10
+      Width = 28
+      Height = 38
+      Caption = '-'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -53
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 9
+      OnClick = Button8Click
+    end
+    object Button9: TButton
+      Left = 864
+      Top = 8
+      Width = 75
+      Height = 41
+      Caption = 'RUIDO 1'
+      TabOrder = 10
+      OnClick = Button9Click
+    end
+    object Button10: TButton
+      Left = 943
+      Top = 8
+      Width = 75
+      Height = 41
+      Caption = 'RUIDO 2'
+      TabOrder = 11
+      OnClick = Button10Click
+    end
+    object Button11: TButton
+      Left = 1023
+      Top = 8
+      Width = 75
+      Height = 41
+      Caption = 'RUIDO 3'
+      TabOrder = 12
+      OnClick = Button11Click
+    end
+    object Button12: TButton
+      Left = 1103
+      Top = 8
+      Width = 75
+      Height = 41
+      Caption = 'RUIDO 4'
+      TabOrder = 13
+      OnClick = Button12Click
+    end
+    object Button13: TButton
+      Left = 1183
+      Top = 8
+      Width = 75
+      Height = 41
+      Caption = 'RUIDO 5'
+      TabOrder = 14
+      OnClick = Button13Click
+    end
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 689
-    Width = 1326
+    Top = 685
+    Width = 1318
     Height = 19
     Panels = <>
     SimplePanel = False
   end
   object GroupBox3: TGroupBox
-    Left = 1024
+    Left = 1016
     Top = 153
     Width = 302
-    Height = 536
+    Height = 532
     Align = alRight
     Caption = 'Registro del intercambio de datos'
     TabOrder = 2
@@ -2152,7 +2240,7 @@ object Form1: TForm1
       Left = 2
       Top = 15
       Width = 298
-      Height = 519
+      Height = 515
       Align = alClient
       BevelOuter = bvNone
       BorderStyle = bsNone
@@ -2163,16 +2251,16 @@ object Form1: TForm1
   object GroupBox4: TGroupBox
     Left = 0
     Top = 153
-    Width = 1016
-    Height = 536
+    Width = 1008
+    Height = 532
     Align = alClient
     Caption = 'Comandos'
     TabOrder = 3
     object Panel1: TPanel
       Left = 2
       Top = 15
-      Width = 1012
-      Height = 309
+      Width = 1004
+      Height = 305
       Align = alClient
       Color = clBlack
       TabOrder = 0
@@ -2248,8 +2336,8 @@ object Form1: TForm1
     end
     object GroupBox1: TGroupBox
       Left = 2
-      Top = 475
-      Width = 1012
+      Top = 471
+      Width = 1004
       Height = 59
       Align = alBottom
       Caption = 'Env'#237'o de datos'
@@ -2280,11 +2368,20 @@ object Form1: TForm1
         OnClick = Edit1Click
         OnKeyUp = Edit1KeyUp
       end
+      object Button14: TButton
+        Left = 582
+        Top = 24
+        Width = 115
+        Height = 25
+        Caption = 'Modo SCROLL'
+        TabOrder = 2
+        OnClick = Button14Click
+      end
     end
     object Panel2: TPanel
       Left = 2
-      Top = 324
-      Width = 1012
+      Top = 320
+      Width = 1004
       Height = 151
       Align = alBottom
       TabOrder = 2
@@ -4731,7 +4828,7 @@ object Form1: TForm1
         OnClick = SpeedButton2Click
       end
       object GroupBox5: TGroupBox
-        Left = 630
+        Left = 622
         Top = 1
         Width = 381
         Height = 149
@@ -9279,14 +9376,14 @@ object Form1: TForm1
     Enabled = False
     Interval = 500
     OnTimer = TimerRXWaitTimer
-    Left = 552
-    Top = 80
+    Left = 424
+    Top = 64
   end
   object TimerParpadeo: TTimer
     Interval = 500
     OnTimer = TimerParpadeoTimer
-    Left = 768
-    Top = 72
+    Left = 480
+    Top = 64
   end
   object VrWave_Corneta: TVrWave
     Sound.Audio = {
@@ -14182,7 +14279,7 @@ object Form1: TForm1
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000}
-    Left = 912
+    Left = 648
     Top = 56
   end
   object VrWaveContReg: TVrWave
@@ -16025,7 +16122,7 @@ object Form1: TForm1
       EFFFF9FFFEFFFDFF0C000700F8FFFAFFFDFF00000A000600FCFFFFFF01000000
       FBFFF8FF01000100FBFFFCFFF6FFF2FFFCFFF8FFFAFF040005000100FBFFF6FF
       F8FFFDFFF7FFFDFF040007000E000C000400FDFF}
-    Left = 968
+    Left = 680
     Top = 56
   end
   object VrWavePunch: TVrWave
@@ -18123,7 +18220,27 @@ object Form1: TForm1
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000000000000000000000000000}
-    Left = 1024
-    Top = 56
+    Left = 792
+    Top = 112
+  end
+  object VrWave1: TVrWave
+    Left = 872
+    Top = 112
+  end
+  object VrWave2: TVrWave
+    Left = 952
+    Top = 112
+  end
+  object VrWave3: TVrWave
+    Left = 1032
+    Top = 112
+  end
+  object VrWave4: TVrWave
+    Left = 1112
+    Top = 112
+  end
+  object VrWave5: TVrWave
+    Left = 1192
+    Top = 112
   end
 end

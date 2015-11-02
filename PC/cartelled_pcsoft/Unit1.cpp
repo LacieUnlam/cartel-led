@@ -550,3 +550,103 @@ void __fastcall TForm1::ButtonPunchClick(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+void __fastcall TForm1::Button7Click(TObject *Sender)
+{
+ if(CommPort1->Connected)
+    {CommPort1->Write(((AnsiString)"+").c_str(),((AnsiString)"+").Length());
+   //  CommandType=CT_CLEAR;
+   //  RetryCount=3;
+   //  TimerRXWait->Enabled=true;
+    }
+ else
+    ShowMessage("Actualmente no está conectado.");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Button8Click(TObject *Sender)
+{
+ if(CommPort1->Connected)
+    {CommPort1->Write(((AnsiString)"-").c_str(),((AnsiString)"-").Length());
+   //  CommandType=CT_CLEAR;
+   //  RetryCount=3;
+   //  TimerRXWait->Enabled=true;
+    }
+ else
+    ShowMessage("Actualmente no está conectado.");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Button9Click(TObject *Sender)
+{
+
+ if (FileExists("ruido1.wav"))
+    {
+      VrWave1->Sound->LoadFromFile("ruido1.wav");
+      VrWave1->Play();
+    }
+  else
+    ShowMessage("Archivo ruido1.wav no encontrado en la carpeta del software.");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Button10Click(TObject *Sender)
+{
+ if (FileExists("ruido2.wav"))
+    {
+      VrWave2->Sound->LoadFromFile("ruido2.wav");
+      VrWave2->Play();
+    }
+  else
+    ShowMessage("Archivo ruido2.wav no encontrado en la carpeta del software.");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Button11Click(TObject *Sender)
+{
+ if (FileExists("ruido3.wav"))
+    {
+      VrWave3->Sound->LoadFromFile("ruido3.wav");
+      VrWave3->Play();
+    }
+  else
+    ShowMessage("Archivo ruido3.wav no encontrado en la carpeta del software.");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Button12Click(TObject *Sender)
+{
+ if (FileExists("ruido4.wav"))
+    {
+      VrWave4->Sound->LoadFromFile("ruido4.wav");
+      VrWave4->Play();
+    }
+  else
+    ShowMessage("Archivo ruido4.wav no encontrado en la carpeta del software.");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Button13Click(TObject *Sender)
+{
+ if (FileExists("ruido5.wav"))
+    {
+      VrWave5->Sound->LoadFromFile("ruido5.wav");
+      VrWave5->Play();
+    }
+  else
+    ShowMessage("Archivo ruido5.wav no encontrado en la carpeta del software.");
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Button14Click(TObject *Sender)
+{
+ if(CommPort1->Connected)
+    {CommPort1->Write(((AnsiString)"m\r").c_str(),((AnsiString)"m\r").Length());
+     //CommandType=CT_CLEAR;
+     //RetryCount=3;
+     //TimerRXWait->Enabled=true;
+    }
+ else
+    ShowMessage("Actualmente no está conectado.");
+}
+//---------------------------------------------------------------------------
+
