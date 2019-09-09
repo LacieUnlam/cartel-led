@@ -1,5 +1,5 @@
-update=sáb 07 sep 2019 13:33:26 -03
-last_client=kicad
+update=lun 01 oct 2012 12:13:46 ART
+last_client=pcbnew
 [general]
 version=1
 [cvpcb]
@@ -39,16 +39,3 @@ LibName9=dip_sockets
 LibName10=DPOW
 LibName11=D11
 LibName12=pin_array
-[eeschema]
-version=1
-LibDir=
-[schematic_editor]
-version=1
-PageLayoutDescrFile=
-PlotDirectoryName=
-SubpartIdSeparator=0
-SubpartFirstId=65
-NetFmtName=
-SpiceAjustPassiveValues=0
-LabSize=50
-ERC_TestSimilarLabels=1
