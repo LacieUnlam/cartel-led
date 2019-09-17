@@ -1,4 +1,4 @@
-update=sáb 07 sep 2019 13:33:26 -03
+update=sáb 07 sep 2019 13:13:39 -03
 last_client=kicad
 [general]
 version=1
@@ -42,13 +42,3 @@ LibName12=pin_array
 [eeschema]
 version=1
 LibDir=
-[schematic_editor]
-version=1
-PageLayoutDescrFile=
-PlotDirectoryName=
-SubpartIdSeparator=0
-SubpartFirstId=65
-NetFmtName=
-SpiceAjustPassiveValues=0
-LabSize=50
-ERC_TestSimilarLabels=1

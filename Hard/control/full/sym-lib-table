@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name hard_control-rescue)(type Legacy)(uri ${KIPRJMOD}/hard_control-rescue.lib)(options "")(descr ""))
+  (lib (name varios)(type Legacy)(uri ${KIPRJMOD}/varios.lib)(options "")(descr ""))
+)
